@@ -12,12 +12,8 @@
     <h1>家計簿</h1>
     <p>収入・固定費・貯金を先に整理して、今月使える金額を自動計算。</p>
   </header>
-
-  <div class="section-controls">
-    <button class="minus-btn" data-section="quick-entry">−</button>
-  </div>
   <section class="card quick-entry" data-section-content="quick-entry">
-    <h2>支出を記録</h2>
+    <div class="section-title"><h2>支出を記録</h2><button class="minus-btn" data-section="quick-entry">−</button></div>
     <div class="grid">
       <label>金額
         <input id="expenseAmount" type="number" min="0" step="100" inputmode="numeric" placeholder="1500">
@@ -36,12 +32,8 @@
       </label>
     </div>
     <button id="addExpense">支出を追加</button>
-  </section>
-
-  <div class="section-controls">
-    <button class="minus-btn" data-section="stats">−</button>
-  </div>
-  <section class="stats" data-section-content="stats">
+  </section><section class="stats" data-section-content="stats">
+    <div class="section-title full"><h2>今月の状況</h2><button class="minus-btn" data-section="stats">−</button></div>
     <div class="stat"><span>今月の収入</span><strong id="incomeView">¥0</strong></div>
     <div class="stat"><span>超過分</span><strong id="extraIncome">¥0</strong></div>
     <div class="stat"><span>今月の貯金予定</span><strong id="plannedSavings">¥0</strong></div>
@@ -50,24 +42,15 @@
     <div class="stat highlight"><span>今月の残り予算</span><strong id="remainingBudget">¥0</strong></div>
     <div class="stat"><span>1日あたりの目安</span><strong id="dailyBudget">¥0</strong></div>
     <div class="stat"><span>今月の支出件数</span><strong id="expenseCount">0件</strong></div>
-  </section>
-
-  <div class="section-controls">
-    <button class="minus-btn" data-section="progress">−</button>
-  </div>
-  <section class="card" data-section-content="progress">
-    <h2>今月の支出ペース</h2>
+  </section> <section class="card" data-section-content="progress">
+    <div class="section-title"><h2>今月の支出ペース</h2><button class="minus-btn" data-section="progress">−</button></div>
     <div class="progress-wrap">
       <div class="progress-label"><span>予算</span><strong id="budgetProgressText">¥0 / ¥0</strong></div>
       <div class="progress"><div id="budgetProgressBar"></div></div>
       <div class="progress-sub"><span id="budgetProgressPercent">0%</span><span id="budgetStatus">データを入力すると表示されます</span></div>
     </div>
-  </section>
-
-  <div class="section-controls">
-    <button class="minus-btn" data-section="charts">−</button>
-  </div>
-  <section class="charts" data-section-content="charts">
+  </section> <section class="charts" data-section-content="charts">
+    <div class="section-title full"><h2>グラフ</h2><button class="minus-btn" data-section="charts">−</button></div>
     <div class="card chart-card">
       <h2>カテゴリ別の支出</h2>
       <div id="categoryChart" class="donut-chart"></div>
@@ -97,24 +80,14 @@
       </div>
       <div id="savingsChartSummary" class="chart-summary"></div>
     </div>
-  </section>
-
-  <div class="section-controls">
-    <button class="minus-btn" data-section="income">−</button>
-  </div>
-  <section class="card" data-section-content="income">
-    <h2>今月の収入</h2>
+  </section> <section class="card" data-section-content="income">
+    <div class="section-title"><h2>今月の収入</h2><button class="minus-btn" data-section="income">−</button></div>
     <label>今月の手取り収入
       <input id="income" type="number" min="0" step="1000" inputmode="numeric" placeholder="300000">
     </label>
     <button id="saveIncome">収入を保存</button>
-  </section>
-
-  <div class="section-controls">
-    <button class="minus-btn" data-section="settings">−</button>
-  </div>
-  <section class="card" data-section-content="settings">
-    <h2>家計ルール</h2>
+  </section> <section class="card" data-section-content="settings">
+    <div class="section-title"><h2>家計ルール</h2><button class="minus-btn" data-section="settings">−</button></div>
     <div class="grid">
       <label>毎月の最低限の手取り
         <input id="minimumTakeHome" type="number" min="0" step="1000" inputmode="numeric" placeholder="250000">
@@ -133,13 +106,8 @@
       </label>
     </div>
     <button id="saveSettings">ルールを保存</button>
-  </section>
-
-  <div class="section-controls">
-    <button class="minus-btn" data-section="expense-list">−</button>
-  </div>
-  <section class="card" data-section-content="expense-list">
-    <h2>今月の支出</h2>
+  </section> <section class="card" data-section-content="expense-list">
+    <div class="section-title"><h2>今月の支出</h2><button class="minus-btn" data-section="expense-list">−</button></div>
     <div id="expenseList" class="list"></div>
   </section>
 

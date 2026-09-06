@@ -28,3 +28,9 @@ button{margin-top:14px;border:0;border-radius:9px;padding:11px 16px;font-size:15
 .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.modal-header h2{margin:0}.close-btn{margin:0;background:transparent;color:#555;font-size:26px;padding:2px 8px}
 .modal-box label{margin-bottom:12px}.modal-actions{display:flex;justify-content:flex-end;gap:8px}.modal-actions button{margin:0}.secondary-btn{background:#eee;color:#333}
 @media(max-width:600px){.expense-right{justify-content:flex-end}.expense{align-items:flex-start}}
+
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.section-title h2{margin:0}
+.section-title.full{grid-column:1/-1}
+.minus-btn{position:static!important;width:30px;height:30px;min-width:30px;margin:0!important;padding:0!important;border-radius:50%;background:#eef0f2;color:#555;font-size:21px;line-height:30px}
+.section-hidden{display:none!important}

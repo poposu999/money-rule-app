@@ -47,14 +47,9 @@ function loadSettings(){
 function renderExpenses(){
   const list=$("expenseList"), es=monthExpenses().slice().reverse();
   if(!es.length){list.innerHTML='<div class="muted">まだ支出はありません。</div>';return}
-  list.innerHTML=es.map((e)=>`<div class="expense" data-id="${e.id||""}"><div><b>${escapeHtml(e.category)}</b><div class="muted">${e.date}${e.memo?"・"+escapeHtml(e.memo):""}</div></div><div class="expense-right"><strong>${yen(e.amount)}</strong><button class="edit-btn" data-edit="${e.id}">編集</button><button class="delete-btn" data-delete="${e.id}">削除</button></div></div>`).join("");
-  list.querySelectorAll("[data-delete]").forEach(btn=>btn.onclick=()=>{
-    const id=btn.dataset.delete;
-    const idx=state.expenses.findIndex(e=>String(e.id)===String(id));
-    if(idx>=0){state.expenses.splice(idx,1);save();calc();renderExpenses();}
-  });
-  list.querySelectorAll("[data-edit]").forEach(btn=>btn.onclick=()=>openEdit(btn.dataset.edit));
+  list.innerHTML=es.map((e)=>`<div class="expense" data-id="${e.id||""}"><div><b>${escapeHtml(e.category)}</b><div class="muted">${e.date}${e.memo?"・"+escapeHtml(e.memo):""}</div></div><div class="expense-right"><strong>${yen(e.amount)}</strong><button type="button" class="edit-btn" data-edit="${e.id}">編集</button><button type="button" class="delete-btn" data-delete="${e.id}">削除</button></div></div>`).join("");
 }
+
 function escapeHtml(str){
   return String(str).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
 }
@@ -178,7 +173,7 @@ document.querySelectorAll(".minus-btn").forEach(btn=>btn.onclick=()=>{
 function openEdit(id){
   const e=state.expenses.find(x=>String(x.id)===String(id));
   if(!e)return;
-  $("editModal").dataset.id=id;
+  $("editModal").dataset.id=String(id);
   $("editAmount").value=e.amount;
   $("editCategory").value=e.category;
   $("editMemo").value=e.memo||"";
@@ -200,4 +195,19 @@ $("saveEdit").onclick=()=>{
   e.date=$("editDate").value||today;
   save();closeEdit();calc();renderExpenses();
 };
+applySectionPrefs();
+
+$("expenseList").addEventListener("click",e=>{
+  const edit=e.target.closest("[data-edit]");
+  const del=e.target.closest("[data-delete]");
+  if(edit){openEdit(edit.dataset.edit);return;}
+  if(del){
+    const id=del.dataset.delete;
+    const idx=state.expenses.findIndex(x=>String(x.id)===String(id));
+    if(idx>=0){
+      state.expenses.splice(idx,1);
+      save();calc();renderExpenses();
+    }
+  }
+});
 applySectionPrefs();
