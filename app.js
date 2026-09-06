@@ -1,13 +1,13 @@
 const KEY="moneyRuleAppV2";
 const defaultState={settings:{minimumTakeHome:250000,fixedCosts:150000,savingsTarget:50000,extraAllowancePercent:50,extraSavingsPercent:50},income:0,bonus:0,expenses:[]};
 let state;
+const today=new Date().toISOString().slice(0,10);
 try{state=JSON.parse(localStorage.getItem(KEY)||JSON.stringify(defaultState));}catch(e){state=JSON.parse(JSON.stringify(defaultState));}
 state.settings={...defaultState.settings,...(state.settings||{})};
 state.expenses=(Array.isArray(state.expenses)?state.expenses:[]).filter(e=>e&&typeof e==="object").map(e=>({...e,amount:Number(e.amount)||0,date:String(e.date||today||""),category:String(e.category||"その他"),memo:String(e.memo||"")}));
 if(state.bonus===undefined) state.bonus=0;
 const $=id=>document.getElementById(id);
 const yen=n=>"¥"+Math.round(Number(n)||0).toLocaleString("ja-JP");
-const today=new Date().toISOString().slice(0,10);
 $("expenseDate").value=today;
 function save(){localStorage.setItem(KEY,JSON.stringify(state));}
 function monthKey(date=today){return String(date).slice(0,7);}
@@ -70,6 +70,7 @@ function calc(){
 }
 function renderSpendingStatus(n,paceDelta,projected,d){
   const el=$("spendingStatus");
+  if(!el)return;
   el.className="spending-status";
   if(n.variableBudget<=0){el.classList.add("danger");el.textContent="使える予算を設定してください";return;}
   if(n.spent>n.variableBudget){el.classList.add("danger");el.textContent=`🔴 使いすぎ：予算を${yen(n.spent-n.variableBudget)}オーバー`;
@@ -128,7 +129,7 @@ $("addExpense").onclick=()=>{const amount=Math.max(0,Number($("expenseAmount").v
 $("categoryQuick").addEventListener("click",e=>{const btn=e.target.closest("[data-category]");if(!btn)return;$("expenseCategory").value=btn.dataset.category;document.querySelectorAll("#categoryQuick button").forEach(b=>b.classList.toggle("selected",b===btn));});
 loadSettings();renderExpenses();calc();
 const sectionPrefs=JSON.parse(localStorage.getItem("moneyRuleSectionPrefs")||"{}"),statPrefs=JSON.parse(localStorage.getItem("moneyRuleStatPrefs")||"{}");
-function applyStatPrefs(){const hidden=statPrefs.income===true;$("incomeStat").classList.toggle("stat-hidden",hidden);$("extraIncomeStat").classList.toggle("stat-hidden",hidden);$("incomeRestore").classList.toggle("hidden",!hidden);}
+function applyStatPrefs(){const hidden=statPrefs.income===true;["incomeStat","extraIncomeStat"].forEach(id=>{const el=$(id);if(el)el.classList.toggle("stat-hidden",hidden)});const restore=$("incomeRestore");if(restore)restore.classList.toggle("hidden",!hidden);}
 function applySectionPrefs(){document.querySelectorAll("[data-section-content]").forEach(section=>{const key=section.dataset.sectionContent,hidden=sectionPrefs[key]===true;section.querySelectorAll(":scope > *:not(.section-title)").forEach(child=>child.classList.toggle("section-body-hidden",hidden));});document.querySelectorAll(".minus-btn").forEach(btn=>{const hidden=sectionPrefs[btn.dataset.section]===true;btn.textContent=hidden?"＋":"−";btn.title=hidden?"表示する":"非表示にする";btn.setAttribute("aria-label",hidden?"表示する":"非表示にする")});}
 function toggleSection(key){if(!key)return;sectionPrefs[key]=sectionPrefs[key]!==true;localStorage.setItem("moneyRuleSectionPrefs",JSON.stringify(sectionPrefs));applySectionPrefs();}
 function toggleIncomeStat(hidden){statPrefs.income=hidden;localStorage.setItem("moneyRuleStatPrefs",JSON.stringify(statPrefs));applyStatPrefs();}
@@ -137,6 +138,6 @@ function openEdit(id){const e=state.expenses.find(x=>String(x.id)===String(id));
 function closeEdit(){$("editModal").classList.add("hidden");}
 $("closeModal").onclick=closeEdit;$("cancelEdit").onclick=closeEdit;$("editModal").onclick=e=>{if(e.target===$("editModal"))closeEdit()};
 $("saveEdit").onclick=()=>{const id=$("editModal").dataset.id,e=state.expenses.find(x=>String(x.id)===String(id)),amount=Math.max(0,Number($("editAmount").value)||0);if(!e||!amount){alert("金額を入力してください");return}e.amount=amount;e.category=$("editCategory").value;e.memo=$("editMemo").value.trim();e.date=$("editDate").value||today;save();closeEdit();calc();renderExpenses();};
-function moveExpense(id,direction){const current=state.expenses.findIndex(x=>String(x.id)===String(id));if(current<0)return;const date=String(state.expenses[current].date||"");const step=direction==="up"?-1:1;let target=current+step;while(target>=0&&target<state.expenses.length&&String(state.expenses[target].date||"")!==date){target+=step;}if(target<0||target>=state.expenses.length)return;const tmp=state.expenses[current];state.expenses[current]=state.expenses[target];state.expenses[target]=tmp;save();renderExpenses();calc();}
+function moveExpense(id,direction){const current=state.expenses.findIndex(x=>String(x.id)===String(id));if(current<0)return;const date=String(state.expenses[current].date||"");const sameDate=state.expenses.map((x,i)=>({x,i})).filter(o=>String(o.x.date||"")===date).map(o=>o.i);const pos=sameDate.indexOf(current);if(pos<0)return;const targetPos=direction==="up"?pos+1:pos-1;if(targetPos<0||targetPos>=sameDate.length)return;const target=sameDate[targetPos];const tmp=state.expenses[current];state.expenses[current]=state.expenses[target];state.expenses[target]=tmp;save();renderExpenses();calc();}
 $("expenseList").addEventListener("click",event=>{const move=event.target.closest("[data-move]"),edit=event.target.closest("[data-edit]"),del=event.target.closest("[data-delete]");if(move){event.preventDefault();moveExpense(move.dataset.id,move.dataset.move);return}if(edit){event.preventDefault();openEdit(edit.dataset.edit);return}if(del){event.preventDefault();const id=del.dataset.delete,idx=state.expenses.findIndex(x=>String(x.id)===String(id));if(idx>=0){state.expenses.splice(idx,1);save();calc();renderExpenses();}}});
 applySectionPrefs();applyStatPrefs();
