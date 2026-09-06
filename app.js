@@ -1,5 +1,6 @@
 const KEY="moneyRuleAppV2";
-const state=JSON.parse(localStorage.getItem(KEY)||'{"settings":{"minimumTakeHome":250000,"fixedCosts":150000,"savingsTarget":50000,"extraAllowancePercent":50,"extraSavingsPercent":50},"income":0,"expenses":[]}');
+const state=JSON.parse(localStorage.getItem(KEY)||'{"settings":{"minimumTakeHome":250000,"fixedCosts":150000,"savingsTarget":50000,"extraAllowancePercent":50,"extraSavingsPercent":50},"income":0,"bonus":0,"expenses":[]}');
+if(state.bonus===undefined) state.bonus=0;
 const $=id=>document.getElementById(id);
 const yen=n=>"¥"+Math.round(n).toLocaleString("ja-JP");
 const today=new Date().toISOString().slice(0,10);
@@ -10,7 +11,10 @@ function monthKey(date=today){return date.slice(0,7);}
 function monthExpenses(key=monthKey()){return state.expenses.filter(e=>e.date.slice(0,7)===key);}
 function monthDateLabel(key){const [y,m]=key.split("-");return `${y}/${Number(m)}`;}
 function calc(){
-  const s=state.settings, income=Number(state.income)||0;
+  const s=state.settings;
+  const baseIncome=Number(state.income)||0;
+  const bonus=Number(state.bonus)||0;
+  const income=baseIncome+bonus;
   const extra=Math.max(0,income-s.minimumTakeHome);
   const allowance=extra*s.extraAllowancePercent/100;
   const extraSavings=extra*s.extraSavingsPercent/100;
@@ -43,6 +47,7 @@ function loadSettings(){
   $("extraAllowancePercent").value=s.extraAllowancePercent;
   $("extraSavingsPercent").value=s.extraSavingsPercent;
   $("income").value=state.income||"";
+  $("bonus").value=state.bonus||"";
 }
 function renderExpenses(){
   const list=$("expenseList"), es=monthExpenses().slice().reverse();
@@ -121,9 +126,12 @@ function renderMonthlyChart(){
 function renderSavingsChart(){
   const svg=$("savingsChart"), g=svgBase(svg), W=700,H=260,pad={l:55,r:20,t:20,b:42};
   const now=new Date(), months=[];
-  for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push({key:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`,income:i===0?Number(state.income)||0:0});}
+  for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push({key:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`,income:i===0?(Number(state.income)||0)+(Number(state.bonus)||0):0});}
   const vals=months.map(m=>{
-    if(m.key===monthKey()) return Number(state.settings.savingsTarget)||0 + Math.max(0,(Number(state.income)||0)-Number(state.settings.minimumTakeHome)||0)*Number(state.settings.extraSavingsPercent||0)/100;
+    if(m.key===monthKey()) {
+      const totalIncome=(Number(state.income)||0)+(Number(state.bonus)||0);
+      return (Number(state.settings.savingsTarget)||0) + Math.max(0,totalIncome-(Number(state.settings.minimumTakeHome)||0))*(Number(state.settings.extraSavingsPercent)||0)/100;
+    }
     return 0;
   });
   const max=Math.max(1000,...vals), barW=(W-pad.l-pad.r)/vals.length*0.62;
@@ -132,7 +140,11 @@ function renderSavingsChart(){
   const current=vals[vals.length-1];
   $("savingsChartSummary").textContent=`今月の貯金予定 ${yen(current)}`;
 }
-$("saveIncome").onclick=()=>{state.income=Math.max(0,Number($("income").value)||0);save();calc();};
+$("saveIncome").onclick=()=>{
+  state.income=Math.max(0,Number($("income").value)||0);
+  state.bonus=Math.max(0,Number($("bonus").value)||0);
+  save();calc();
+};
 $("saveSettings").onclick=()=>{
   state.settings={
     minimumTakeHome:Math.max(0,Number($("minimumTakeHome").value)||0),
@@ -158,10 +170,11 @@ function applyStatPrefs(){
   const hidden=statPrefs.income===true;
   $("incomeStat").classList.toggle("stat-hidden",hidden);
   $("extraIncomeStat").classList.toggle("stat-hidden",hidden);
+  $("incomeRestore").classList.toggle("hidden",!hidden);
   const btn=document.querySelector('.stat-toggle-btn[data-stat="income"]');
   if(btn){
-    btn.textContent=hidden?"＋":"−";
-    btn.title=hidden?"表示する":"非表示にする";
+    btn.textContent="−";
+    btn.title="非表示にする";
   }
 }
 function applySectionPrefs(){
@@ -182,7 +195,12 @@ document.querySelectorAll(".minus-btn").forEach(btn=>btn.onclick=()=>{
   applySectionPrefs();
 });
 document.querySelector('.stat-toggle-btn[data-stat="income"]').onclick=()=>{
-  statPrefs.income=statPrefs.income!==true;
+  statPrefs.income=true;
+  localStorage.setItem("moneyRuleStatPrefs",JSON.stringify(statPrefs));
+  applyStatPrefs();
+};
+$("incomeRestore").querySelector("button").onclick=()=>{
+  statPrefs.income=false;
   localStorage.setItem("moneyRuleStatPrefs",JSON.stringify(statPrefs));
   applyStatPrefs();
 };

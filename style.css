@@ -40,3 +40,6 @@ button{margin-top:14px;border:0;border-radius:9px;padding:11px 16px;font-size:15
 .stat{position:relative;padding-right:44px;}
 .stat-toggle-btn{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:30px;height:30px;border:1px solid #d1d5db;border-radius:8px;background:#fff;font-size:20px;line-height:1;cursor:pointer;}
 .stat-hidden{display:none!important;}
+
+.income-restore{display:flex;justify-content:center;margin:8px 0 16px;}
+.income-restore.hidden{display:none!important;}
