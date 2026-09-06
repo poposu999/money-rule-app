@@ -111,7 +111,7 @@ function renderBudgetProgress(budget,spent){
   const d=getDayInfo();let status="データを入力すると表示されます";if(budget<=0)status="予算を設定してください";else if(spent>budget)status=`予算を${yen(spent-budget)}オーバー`;else status=pct<=d.day/d.last*100+5?"順調なペース　この調子！":"やや速いペース";$("budgetStatus").textContent=status;
 }
 function renderCategoryChart(es){
-  const categories=["食費","日用品","交通費","娯楽","外食","その他"], totals=categories.map(c=>({name:c,value:es.filter(e=>e.category===c).reduce((a,e)=>a+(Number(e.amount)||0),0)})),total=totals.reduce((a,x)=>a+x.value,0),chart=$("categoryChart"),legend=$("categoryLegend");
+  const categories=["食費","日用品","水光熱費","交通費","娯楽","外食","その他"], totals=categories.map(c=>({name:c,value:es.filter(e=>e.category===c).reduce((a,e)=>a+(Number(e.amount)||0),0)})),total=totals.reduce((a,x)=>a+x.value,0),chart=$("categoryChart"),legend=$("categoryLegend");
   if(!total){chart.innerHTML='<div class="donut-empty">まだ支出がありません</div>';legend.innerHTML="";return;}
   let cursor=0,stops=[];totals.filter(x=>x.value>0).forEach((x,i)=>{const start=cursor;cursor+=x.value/total*360;stops.push(`hsl(${i*48},55%,55%) ${start}deg ${cursor}deg`);});
   chart.innerHTML=`<div class="donut" style="background:conic-gradient(${stops.join(",")})"><div class="donut-hole"><b>${yen(total)}</b><span>今月</span></div></div>`;
