@@ -9,7 +9,7 @@
 <body>
 <main class="container">
   <header>
-    <h1>家計簿 <span class="app-version">v12</span></h1>
+    <h1>家計簿 <span class="app-version">v13</span></h1>
     <p>収入・固定費・貯金を先に整理して、今月使える金額を自動計算。</p>
   </header>
   <section class="card quick-entry" data-section-content="quick-entry">
@@ -19,7 +19,15 @@
         <input id="expenseAmount" type="number" min="0" step="100" inputmode="numeric" placeholder="1500">
       </label>
       <label>カテゴリ
-        <select id="expenseCategory">
+        <div class="category-quick" id="categoryQuick">
+          <button type="button" data-category="食費">🍚 食費</button>
+          <button type="button" data-category="日用品">🛒 日用品</button>
+          <button type="button" data-category="交通費">🚃 交通費</button>
+          <button type="button" data-category="娯楽">🎮 娯楽</button>
+          <button type="button" data-category="外食">🍴 外食</button>
+          <button type="button" data-category="その他">その他</button>
+        </div>
+        <select id="expenseCategory" class="category-select">
           <option>食費</option><option>日用品</option><option>交通費</option>
           <option>娯楽</option><option>外食</option><option>その他</option>
         </select>
@@ -32,10 +40,18 @@
       </label>
     </div>
     <button id="addExpense">支出を追加</button>
+    <p class="entry-hint">金額 → カテゴリ → 記録、の3ステップで入力できます。</p>
   </section>
 <section class="card" data-section-content="expense-list">
     <div class="section-title expense-section-title"><h2>今月の支出</h2><div class="section-title-actions"><strong id="expenseTotal" class="expense-total">合計：¥0</strong><button class="minus-btn" data-section="expense-list">−</button></div></div>
     <div id="expenseList" class="expense-table-wrap"></div>
+  </section>
+  <section class="card budget-breakdown" data-section-content="breakdown">
+    <div class="section-title"><h2>お金の内訳</h2><button class="minus-btn" data-section="breakdown">−</button></div>
+    <div class="breakdown-row"><span>固定費（先に確保）</span><strong id="fixedCostsView">¥0</strong></div>
+    <div class="breakdown-row"><span>貯金（先に確保）</span><strong id="savingsReserveView">¥0</strong></div>
+    <div class="breakdown-row highlight-row"><span>変動費として使える額</span><strong id="variableBudgetView">¥0</strong></div>
+    <p class="muted">固定費は家計ルールで先に確保するため、支出記録には含めず、日々の支出は変動費として管理します。</p>
   </section>
   <section class="stats" data-section-content="stats">
     <div class="section-title full"><h2>今月の状況</h2><button class="minus-btn" data-section="stats">−</button></div>
@@ -47,6 +63,7 @@
     <div class="stat" id="extraIncomeStat"><span>毎月の最低限の手取りからの超過分</span><strong id="extraIncome">¥0</strong></div>
     <div class="stat"><span>今月の貯金予定</span><strong id="plannedSavings">¥0</strong></div>
     <div class="stat"><span>今月使える予算</span><strong id="spendingBudget">¥0</strong></div>
+    <div class="stat"><span>今月のお小遣い枠</span><strong id="allowanceStat">¥0</strong></div>
   </section>
   <div id="incomeRestore" class="income-restore hidden"><button type="button" class="secondary-btn">今月の収入を表示</button></div>
   <section class="card" data-section-content="progress">
@@ -56,7 +73,12 @@
       <div class="progress"><div id="budgetProgressBar"></div></div>
       <div class="progress-sub"><span id="budgetProgressPercent">0%</span><span id="budgetStatus">データを入力すると表示されます</span></div>
     </div>
-  </section> <section class="charts" data-section-content="charts">
+  </section>
+  <section class="card forecast-card" data-section-content="forecast">
+    <div class="section-title"><h2>使いすぎ予測</h2><button class="minus-btn" data-section="forecast">−</button></div>
+    <div class="forecast-main"><strong id="forecastMessage">データを入力してください</strong><span id="forecastDetail"></span></div>
+  </section>
+  <section class="charts" data-section-content="charts">
     <div class="section-title full"><h2>グラフ</h2><button class="minus-btn" data-section="charts">−</button></div>
     <div class="card chart-card">
       <h2>カテゴリ別の支出</h2>
