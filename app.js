@@ -21,7 +21,7 @@ function calc(){
   const plannedSavings=s.savingsTarget+extraSavings;
   const budget=income-s.fixedCosts-s.savingsTarget+allowance;
   const es=monthExpenses();
-  const spent=es.reduce((a,e)=>a+e.amount,0);
+  const spent=es.reduce((a,e)=>a+Number(e.amount||0),0);
   const remaining=budget-spent;
   const d=new Date(), last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(), day=d.getDate();
   const daily=Math.max(0,remaining)/(last-day+1);
@@ -78,7 +78,7 @@ function renderBudgetProgress(budget,spent){
 }
 function renderCategoryChart(es){
   const categories=["食費","日用品","交通費","娯楽","外食","その他"];
-  const totals=categories.map(c=>({name:c,value:es.filter(e=>e.category===c).reduce((a,e)=>a+e.amount,0)}));
+  const totals=categories.map(c=>({name:c,value:es.filter(e=>e.category===c).reduce((a,e)=>a+Number(e.amount||0),0)}));
   const total=totals.reduce((a,x)=>a+x.value,0);
   const chart=$("categoryChart"), legend=$("categoryLegend");
   if(!total){chart.innerHTML='<div class="donut-empty">まだ支出がありません</div>';legend.innerHTML="";return;}
@@ -104,7 +104,7 @@ function svgBase(svg){
 function renderDailyChart(es,budget){
   const svg=$("dailyChart"), g=svgBase(svg), W=700,H=260,pad={l:55,r:20,t:20,b:42};
   const d=new Date(), days=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();
-  const vals=Array.from({length:days},(_,i)=>es.filter(e=>Number(e.date.slice(-2))===i+1).reduce((a,e)=>a+e.amount,0));
+  const vals=Array.from({length:days},(_,i)=>es.filter(e=>Number(e.date.slice(-2))===i+1).reduce((a,e)=>a+Number(e.amount||0),0));
   const max=Math.max(1000,...vals);
   for(let i=0;i<=4;i++){const y=pad.t+(H-pad.t-pad.b)*i/4;g.line(pad.l,y,W-pad.r,y);g.text(8,y+4,yen(max*(1-i/4)));}
   const pts=vals.map((v,i)=>`${pad.l+(W-pad.l-pad.r)*(i/(days-1))},${H-pad.b-(H-pad.t-pad.b)*v/max}`).join(" ");
@@ -118,7 +118,7 @@ function renderMonthlyChart(){
   const svg=$("monthlyChart"), g=svgBase(svg), W=700,H=260,pad={l:55,r:20,t:20,b:42};
   const now=new Date(), keys=[];
   for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);keys.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`);}
-  const vals=keys.map(k=>monthExpenses(k).reduce((a,e)=>a+e.amount,0));
+  const vals=keys.map(k=>monthExpenses(k).reduce((a,e)=>a+Number(e.amount||0),0));
   const max=Math.max(1000,...vals);
   for(let i=0;i<=4;i++){const y=pad.t+(H-pad.t-pad.b)*i/4;g.line(pad.l,y,W-pad.r,y);g.text(8,y+4,yen(max*(1-i/4)));}
   const pts=vals.map((v,i)=>`${pad.l+(W-pad.l-pad.r)*(i/(vals.length-1))},${H-pad.b-(H-pad.t-pad.b)*v/max}`).join(" ");
@@ -169,44 +169,52 @@ loadSettings();calc();renderExpenses();
 
 const sectionPrefs=JSON.parse(localStorage.getItem("moneyRuleSectionPrefs")||"{}");
 const statPrefs=JSON.parse(localStorage.getItem("moneyRuleStatPrefs")||"{}");
+
 function applyStatPrefs(){
   const hidden=statPrefs.income===true;
   $("incomeStat").classList.toggle("stat-hidden",hidden);
   $("extraIncomeStat").classList.toggle("stat-hidden",hidden);
   $("incomeRestore").classList.toggle("hidden",!hidden);
-  const btn=document.querySelector('.stat-toggle-btn[data-stat="income"]');
-  if(btn){
-    btn.textContent="−";
-    btn.title="非表示にする";
-  }
 }
+
 function applySectionPrefs(){
-  document.querySelectorAll("[data-section-content]").forEach(el=>{
-    const key=el.dataset.sectionContent;
-    el.querySelectorAll(":scope > *:not(.section-title)").forEach(child=>child.classList.toggle("section-body-hidden",sectionPrefs[key]===true));
+  document.querySelectorAll("[data-section-content]").forEach(section=>{
+    const key=section.dataset.sectionContent;
+    const hidden=sectionPrefs[key]===true;
+    section.querySelectorAll(":scope > *:not(.section-title)").forEach(child=>{
+      child.classList.toggle("section-body-hidden",hidden);
+    });
   });
   document.querySelectorAll(".minus-btn").forEach(btn=>{
-    const key=btn.dataset.section;
-    btn.textContent=sectionPrefs[key]===true?"＋":"−";
-    btn.title=sectionPrefs[key]===true?"表示する":"非表示にする";
+    const hidden=sectionPrefs[btn.dataset.section]===true;
+    btn.textContent=hidden?"＋":"−";
+    btn.title=hidden?"表示する":"非表示にする";
+    btn.setAttribute("aria-label",hidden?"表示する":"非表示にする");
   });
 }
-document.querySelectorAll(".minus-btn").forEach(btn=>btn.onclick=()=>{
-  const key=btn.dataset.section;
+
+function toggleSection(key){
+  if(!key)return;
   sectionPrefs[key]=sectionPrefs[key]!==true;
   localStorage.setItem("moneyRuleSectionPrefs",JSON.stringify(sectionPrefs));
   applySectionPrefs();
+}
+
+function toggleIncomeStat(hidden){
+  statPrefs.income=hidden;
+  localStorage.setItem("moneyRuleStatPrefs",JSON.stringify(statPrefs));
+  applyStatPrefs();
+}
+
+document.addEventListener("click",event=>{
+  const minus=event.target.closest(".minus-btn");
+  if(minus){ toggleSection(minus.dataset.section); return; }
+  const statToggle=event.target.closest('.stat-toggle-btn[data-stat="income"]');
+  if(statToggle){ toggleIncomeStat(true); return; }
+  const restore=event.target.closest("#incomeRestore button");
+  if(restore){ toggleIncomeStat(false); return; }
 });
-document.querySelector('.stat-toggle-btn[data-stat="income"]').onclick=()=>{
-  statPrefs.income=true;
-  localStorage.setItem("moneyRuleStatPrefs",JSON.stringify(statPrefs));
-  applyStatPrefs();
-};
-$("incomeRestore").querySelector("button").onclick=()=>{
-  statPrefs.income=false;
-  localStorage.setItem("moneyRuleStatPrefs",JSON.stringify(statPrefs));
-  applyStatPrefs();
-};
+
 function openEdit(id){
   const e=state.expenses.find(x=>String(x.id)===String(id));
   if(!e)return;
@@ -235,18 +243,26 @@ $("saveEdit").onclick=()=>{
 applySectionPrefs();
 applyStatPrefs();
 
-$("expenseList").addEventListener("click",e=>{
-  const edit=e.target.closest("[data-edit]");
-  const del=e.target.closest("[data-delete]");
-  if(edit){openEdit(edit.dataset.edit);return;}
+$("expenseList").addEventListener("click",event=>{
+  const edit=event.target.closest("[data-edit]");
+  const del=event.target.closest("[data-delete]");
+  if(edit){
+    event.preventDefault();
+    openEdit(edit.dataset.edit);
+    return;
+  }
   if(del){
+    event.preventDefault();
     const id=del.dataset.delete;
     const idx=state.expenses.findIndex(x=>String(x.id)===String(id));
     if(idx>=0){
       state.expenses.splice(idx,1);
-      save();calc();renderExpenses();
+      save();
+      calc();
+      renderExpenses();
     }
   }
 });
+
 applySectionPrefs();
 applyStatPrefs();
