@@ -21,7 +21,7 @@ function calc(){
   const plannedSavings=s.savingsTarget+extraSavings;
   const budget=income-s.fixedCosts-s.savingsTarget+allowance;
   const es=monthExpenses();
-  const spent=es.reduce((a,e)=>a+Number(e.amount||0),0);
+  const spent=es.reduce((a,e)=>a+e.amount,0);
   const remaining=budget-spent;
   const d=new Date(), last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(), day=d.getDate();
   const daily=Math.max(0,remaining)/(last-day+1);
@@ -78,7 +78,7 @@ function renderBudgetProgress(budget,spent){
 }
 function renderCategoryChart(es){
   const categories=["食費","日用品","交通費","娯楽","外食","その他"];
-  const totals=categories.map(c=>({name:c,value:es.filter(e=>e.category===c).reduce((a,e)=>a+Number(e.amount||0),0)}));
+  const totals=categories.map(c=>({name:c,value:es.filter(e=>e.category===c).reduce((a,e)=>a+e.amount,0)}));
   const total=totals.reduce((a,x)=>a+x.value,0);
   const chart=$("categoryChart"), legend=$("categoryLegend");
   if(!total){chart.innerHTML='<div class="donut-empty">まだ支出がありません</div>';legend.innerHTML="";return;}
@@ -104,7 +104,7 @@ function svgBase(svg){
 function renderDailyChart(es,budget){
   const svg=$("dailyChart"), g=svgBase(svg), W=700,H=260,pad={l:55,r:20,t:20,b:42};
   const d=new Date(), days=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();
-  const vals=Array.from({length:days},(_,i)=>es.filter(e=>Number(e.date.slice(-2))===i+1).reduce((a,e)=>a+Number(e.amount||0),0));
+  const vals=Array.from({length:days},(_,i)=>es.filter(e=>Number(e.date.slice(-2))===i+1).reduce((a,e)=>a+e.amount,0));
   const max=Math.max(1000,...vals);
   for(let i=0;i<=4;i++){const y=pad.t+(H-pad.t-pad.b)*i/4;g.line(pad.l,y,W-pad.r,y);g.text(8,y+4,yen(max*(1-i/4)));}
   const pts=vals.map((v,i)=>`${pad.l+(W-pad.l-pad.r)*(i/(days-1))},${H-pad.b-(H-pad.t-pad.b)*v/max}`).join(" ");
@@ -118,7 +118,7 @@ function renderMonthlyChart(){
   const svg=$("monthlyChart"), g=svgBase(svg), W=700,H=260,pad={l:55,r:20,t:20,b:42};
   const now=new Date(), keys=[];
   for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);keys.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`);}
-  const vals=keys.map(k=>monthExpenses(k).reduce((a,e)=>a+Number(e.amount||0),0));
+  const vals=keys.map(k=>monthExpenses(k).reduce((a,e)=>a+e.amount,0));
   const max=Math.max(1000,...vals);
   for(let i=0;i<=4;i++){const y=pad.t+(H-pad.t-pad.b)*i/4;g.line(pad.l,y,W-pad.r,y);g.text(8,y+4,yen(max*(1-i/4)));}
   const pts=vals.map((v,i)=>`${pad.l+(W-pad.l-pad.r)*(i/(vals.length-1))},${H-pad.b-(H-pad.t-pad.b)*v/max}`).join(" ");
