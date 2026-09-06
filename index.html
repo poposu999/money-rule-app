@@ -1,43 +1,85 @@
 <!doctype html>
-<html lang="ja"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>家計ルール</title><link rel="stylesheet" href="style.css"></head>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>家計簿</title>
+<link rel="stylesheet" href="style.css">
+</head>
 <body>
-<header><div><h1>家計ルール</h1><small id="month"></small></div><button id="settings">設定</button></header>
-<main>
-<section class="hero"><small>今月使えるお金</small><div id="remaining">¥0</div><p id="remainingSub"></p></section>
-<section class="grid">
-<div class="card"><small>今日使った金額</small><b id="today">¥0</b></div>
-<div class="card"><small>今月の支出</small><b id="spent">¥0</b></div>
-<div class="card"><small>1日あたり目安</small><b id="daily">¥0</b></div>
-<div class="card"><small>今月の貯金予定</small><b id="savings">¥0</b></div>
-</section>
-<section class="card"><h2>今月のお金の内訳</h2>
-<div class="row"><span>収入</span><b id="income">¥0</b></div>
-<div class="row"><span>固定費</span><b id="fixed">¥0</b></div>
-<div class="row"><span>貯金</span><b id="saveDetail">¥0</b></div>
-<div class="row"><span>追加お小遣い</span><b id="allowance">¥0</b></div>
-</section>
-<section class="card"><h2>今月の支出</h2><div id="list"></div></section>
+<main class="container">
+  <header>
+    <h1>家計簿</h1>
+    <p>収入・固定費・貯金を先に整理して、今月使える金額を自動計算。</p>
+  </header>
+
+  <section class="card">
+    <h2>今月の収入</h2>
+    <label>今月の手取り収入
+      <input id="income" type="number" min="0" step="1000" placeholder="300000">
+    </label>
+    <button id="saveIncome">収入を保存</button>
+  </section>
+
+  <section class="card">
+    <h2>家計ルール</h2>
+    <div class="grid">
+      <label>毎月の最低限の手取り
+        <input id="minimumTakeHome" type="number" min="0" step="1000" placeholder="250000">
+      </label>
+      <label>毎月の固定費
+        <input id="fixedCosts" type="number" min="0" step="1000" placeholder="150000">
+      </label>
+      <label>毎月の貯金目標
+        <input id="savingsTarget" type="number" min="0" step="1000" placeholder="50000">
+      </label>
+      <label>超過分のお小遣い割合（%）
+        <input id="extraAllowancePercent" type="number" min="0" max="100" step="1" value="50">
+      </label>
+      <label>超過分の貯金割合（%）
+        <input id="extraSavingsPercent" type="number" min="0" max="100" step="1" value="50">
+      </label>
+    </div>
+    <button id="saveSettings">ルールを保存</button>
+  </section>
+
+  <section class="stats">
+    <div class="stat"><span>今月の収入</span><strong id="incomeView">¥0</strong></div>
+    <div class="stat"><span>超過分</span><strong id="extraIncome">¥0</strong></div>
+    <div class="stat"><span>今月の貯金予定</span><strong id="plannedSavings">¥0</strong></div>
+    <div class="stat"><span>今月使える予算</span><strong id="spendingBudget">¥0</strong></div>
+    <div class="stat"><span>今月使った金額</span><strong id="monthSpent">¥0</strong></div>
+    <div class="stat highlight"><span>今月の残り予算</span><strong id="remainingBudget">¥0</strong></div>
+    <div class="stat"><span>1日あたりの目安</span><strong id="dailyBudget">¥0</strong></div>
+  </section>
+
+  <section class="card">
+    <h2>支出を記録</h2>
+    <div class="grid">
+      <label>金額
+        <input id="expenseAmount" type="number" min="0" step="100" placeholder="1500">
+      </label>
+      <label>カテゴリ
+        <select id="expenseCategory">
+          <option>食費</option><option>日用品</option><option>交通費</option>
+          <option>娯楽</option><option>外食</option><option>その他</option>
+        </select>
+      </label>
+      <label>メモ
+        <input id="expenseMemo" type="text" placeholder="昼ごはん">
+      </label>
+      <label>日付
+        <input id="expenseDate" type="date">
+      </label>
+    </div>
+    <button id="addExpense">支出を追加</button>
+  </section>
+
+  <section class="card">
+    <h2>今月の支出</h2>
+    <div id="expenseList" class="list"></div>
+  </section>
 </main>
-<button class="fab" id="add">＋ 支出を記録</button>
-
-<dialog id="expenseDlg"><form id="expenseForm">
-<h2>支出を記録</h2><label>金額<input id="amount" type="number" min="1" required></label>
-<label>カテゴリ<select id="category"><option>食費</option><option>日用品</option><option>交通費</option><option>趣味</option><option>外食</option><option>その他</option></select></label>
-<label>メモ<input id="memo" maxlength="50" placeholder="昼ごはん"></label>
-<label>日付<input id="date" type="date" required></label>
-<div class="actions"><button type="button" id="cancelExpense">キャンセル</button><button class="primary">記録する</button></div>
-</form></dialog>
-
-<dialog id="settingsDlg"><form id="settingsForm">
-<h2>家計ルール設定</h2>
-<label>毎月の最低限の手取り<input id="minTakeHome" type="number" min="0" required></label>
-<label>毎月の固定費<input id="fixedCost" type="number" min="0" required></label>
-<label>毎月の貯金目標額<input id="savingTarget" type="number" min="0" required></label>
-<div class="two"><label>超過分のお小遣い<input id="allowPct" type="number" min="0" max="100" required></label>
-<label>超過分の貯金<input id="savePct" type="number" min="0" max="100" required></label></div>
-<p id="warning"></p><<div class="actions"><button type="button" id="cancelSettings">キャンセル</button><button class="primary">保存する</button></div>
-</form></dialog>
-
-<script src="app.js"></script></body></html>
+<script src="app.js"></script>
+</body>
+</html>
