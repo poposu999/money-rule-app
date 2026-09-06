@@ -51,8 +51,6 @@ function calc(){
   $("remainingBudget").textContent=yen(n.remaining);
   $("remainingDaysLabel").textContent=`（残り${d.remainingDays}日）`;
   $("dailyBudget").textContent=yen(daily);
-  $("expenseCount").textContent=n.es.length+"件";
-  $("allowanceStat").textContent=yen(n.allowance);
   $("fixedCostsView").textContent=yen(n.fixed);
   $("savingsReserveView").textContent=yen(n.plannedSavings);
   $("variableBudgetView").textContent=yen(n.variableBudget);

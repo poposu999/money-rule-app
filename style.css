@@ -120,3 +120,7 @@ button{margin-top:14px;border:0;border-radius:9px;padding:11px 16px;font-size:15
 
 /* ver.23: 「前月の収入を表示」を今月の状況の白枠内に配置し、表示ボタンを＋記号付きに調整 */
 @media(max-width:600px){.income-restore .secondary-btn{font-size:12px;padding:5px 9px}}
+
+/* ver.24: 前月の収入の非表示ボタンをマイナス記号として明確に表示 */
+.stats .stat-toggle-btn{display:inline-flex;align-items:center;justify-content:center;font-weight:700;color:#333;background:#f3f4f6;border:1px solid #bfc3c8;box-shadow:0 1px 2px rgba(0,0,0,.08);}
+.stats .stat-toggle-btn:hover{background:#e5e7eb;}
