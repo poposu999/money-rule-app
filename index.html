@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>家計簿</title>
-<link rel="stylesheet" href="style.css?v=26">
+<link rel="stylesheet" href="style.css?v=27">
 </head>
 <body>
 <main class="container">
   <header>
-    <h1>家計簿 <span class="app-version">ver.22</span></h1>
+    <h1>家計簿 <span class="app-version">ver.27</span></h1>
     <p>収入・固定費・貯金を先に整理して、今月使える金額を自動計算。</p>
   </header>
   <section class="card quick-entry" data-section-content="quick-entry">
@@ -23,12 +23,15 @@
           <button type="button" data-category="食費">🍚 食費</button>
           <button type="button" data-category="日用品">🛒 日用品</button>
           <button type="button" data-category="交通費">🚃 交通費</button>
+          <button type="button" data-category="水光熱費">💡 水光熱費</button>
+          <button type="button" data-category="美容">💇 美容</button>
+          <button type="button" data-category="医療関係">🏥 医療関係</button>
           <button type="button" data-category="娯楽">🎮 娯楽</button>
           <button type="button" data-category="外食">🍴 外食</button>
           <button type="button" data-category="その他">その他</button>
         </div>
         <select id="expenseCategory" class="category-select">
-          <option>食費</option><option>日用品</option><option>水光熱費</option><option>交通費</option>
+          <option>食費</option><option>日用品</option><option>水光熱費</option><option>交通費</option><option>美容</option><option>医療関係</option>
           <option>娯楽</option><option>外食</option><option>その他</option>
         </select>
       </label>
@@ -41,6 +44,29 @@
     </div>
     <button id="addExpense">支出を追加</button>
     <p class="entry-hint">金額 → カテゴリ → 記録、の3ステップで入力できます。</p>
+  </section>
+  <section class="card planned-section" data-section-content="planned-list">
+    <div class="section-title expense-section-title"><h2>今月の予定支出</h2><div class="section-title-actions"><strong id="plannedTotal" class="expense-total">合計：¥0</strong><button class="minus-btn" data-section="planned-list">−</button></div></div>
+    <div class="grid">
+      <label>金額
+        <input id="plannedAmount" type="number" min="0" step="100" inputmode="numeric" placeholder="5000">
+      </label>
+      <label>カテゴリ
+        <select id="plannedCategory" class="category-select">
+          <option>食費</option><option>日用品</option><option>水光熱費</option><option>交通費</option><option>美容</option><option>医療関係</option>
+          <option>娯楽</option><option>外食</option><option>その他</option>
+        </select>
+      </label>
+      <label>メモ
+        <input id="plannedMemo" type="text" placeholder="飲み会など">
+      </label>
+      <label>予定日
+        <input id="plannedDate" type="date">
+      </label>
+    </div>
+    <button id="addPlannedExpense">予定支出を追加</button>
+    <p class="entry-hint">先に予定を登録しておくと、残り予算に自動で反映されます。支払ったら「支出に確定」で実績へ移せます。</p>
+    <div id="plannedList" class="expense-table-wrap"></div>
   </section>
 <section class="card" data-section-content="expense-list">
     <div class="section-title expense-section-title"><h2>今月の支出</h2><div class="section-title-actions"><strong id="expenseTotal" class="expense-total">合計：¥0</strong><button class="minus-btn" data-section="expense-list">−</button></div></div>
@@ -57,6 +83,7 @@
     <div class="section-title full"><h2>今月の状況</h2><button class="minus-btn" data-section="stats">−</button></div>
     <div class="stat"><span>今月使った金額</span><strong id="monthSpent">¥0</strong></div>
     <div class="stat highlight"><span>今月の残り予算 <small id="remainingDaysLabel">（残り0日）</small></span><strong id="remainingBudget">¥0</strong></div>
+    <div class="stat"><span>今月の予定支出</span><strong id="plannedExpenseView">¥0</strong></div>
     <div class="stat"><span>1日あたりの目安 <small>（残り予算 ÷ 残り日数）</small></span><strong id="dailyBudget">¥0</strong></div>
     <div class="stat"><span>今月使える予算</span><strong id="spendingBudget">¥0</strong></div>
     <div class="stat" id="incomeStat"><span>前月の収入</span><strong id="incomeView">¥0</strong><button type="button" class="stat-toggle-btn" data-stat="income" title="非表示にする">−</button></div>
@@ -137,13 +164,28 @@
     </div>
     <button id="saveSettings">ルールを保存</button>
   </section>
+  <div id="plannedEditModal" class="modal hidden">
+    <div class="modal-box">
+      <div class="modal-header"><h2>予定支出を編集</h2><button id="closePlannedModal" class="close-btn">×</button></div>
+      <label>金額<input id="plannedEditAmount" type="number" min="0" step="100" inputmode="numeric"></label>
+      <label>カテゴリ
+        <select id="plannedEditCategory">
+          <option>食費</option><option>日用品</option><option>水光熱費</option><option>交通費</option><option>美容</option><option>医療関係</option>
+          <option>娯楽</option><option>外食</option><option>その他</option>
+        </select>
+      </label>
+      <label>メモ<input id="plannedEditMemo" type="text"></label>
+      <label>予定日<input id="plannedEditDate" type="date"></label>
+      <div class="modal-actions"><button id="cancelPlannedEdit" class="secondary-btn">キャンセル</button><button id="savePlannedEdit">変更を保存</button></div>
+    </div>
+  </div>
   <div id="editModal" class="modal hidden">
     <div class="modal-box">
       <div class="modal-header"><h2>支出を編集</h2><button id="closeModal" class="close-btn">×</button></div>
       <label>金額<input id="editAmount" type="number" min="0" step="100" inputmode="numeric"></label>
       <label>カテゴリ
         <select id="editCategory">
-          <option>食費</option><option>日用品</option><option>水光熱費</option><option>交通費</option>
+          <option>食費</option><option>日用品</option><option>水光熱費</option><option>交通費</option><option>美容</option><option>医療関係</option>
           <option>娯楽</option><option>外食</option><option>その他</option>
         </select>
       </label>
@@ -153,6 +195,6 @@
     </div>
   </div>
 </main>
-<script src="app.js?v=26"></script>
+<script src="app.js?v=27"></script>
 </body>
 </html>

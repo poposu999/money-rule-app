@@ -1,5 +1,5 @@
 const KEY="moneyRuleAppV2";
-const defaultState={settings:{minimumTakeHome:250000,fixedCosts:150000,savingsTarget:50000,extraAllowancePercent:50,extraSavingsPercent:50},income:0,bonus:0,expenses:[]};
+const defaultState={settings:{minimumTakeHome:250000,fixedCosts:150000,savingsTarget:50000,extraAllowancePercent:50,extraSavingsPercent:50},income:0,bonus:0,expenses:[],plannedExpenses:[]};
 let state;
 const now=new Date();
 const today=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
@@ -7,12 +7,14 @@ try{state=JSON.parse(localStorage.getItem(KEY)||JSON.stringify(defaultState));}c
 state.settings={...defaultState.settings,...(state.settings||{})};
 state.expenses=(Array.isArray(state.expenses)?state.expenses:[]).filter(e=>e&&typeof e==="object").map(e=>({...e,amount:Number(e.amount)||0,date:String(e.date||today||""),category:String(e.category||"その他"),memo:String(e.memo||"")}));
 if(state.bonus===undefined) state.bonus=0;
+state.plannedExpenses=(Array.isArray(state.plannedExpenses)?state.plannedExpenses:[]).filter(e=>e&&typeof e==="object").map(e=>({...e,amount:Number(e.amount)||0,date:String(e.date||today||""),category:String(e.category||"その他"),memo:String(e.memo||"")}));
 const $=id=>document.getElementById(id);
 const yen=n=>"¥"+Math.round(Number(n)||0).toLocaleString("ja-JP");
 $("expenseDate").value=today;
 function save(){localStorage.setItem(KEY,JSON.stringify(state));}
 function monthKey(date=today){return String(date).slice(0,7);}
 function monthExpenses(key=monthKey()){return state.expenses.filter(e=>e&&String(e.date||"").slice(0,7)===key);}
+function monthPlannedExpenses(key=monthKey()){return state.plannedExpenses.filter(e=>e&&String(e.date||"").slice(0,7)===key);}
 function monthDateLabel(key){const [y,m]=key.split("-");return `${y}/${Number(m)}`;}
 function getNumbers(){
   const s=state.settings;
@@ -25,9 +27,11 @@ function getNumbers(){
   const plannedSavings=target+extraSavings;
   const variableBudget=Math.max(0,totalIncome-fixed-target+allowance);
   const es=monthExpenses();
+  const planned=monthPlannedExpenses();
   const spent=es.reduce((a,e)=>a+(Number(e.amount)||0),0);
-  const remaining=variableBudget-spent;
-  return {s,totalIncome,minimum,fixed,target,extra,allowance,extraSavings,plannedSavings,variableBudget,es,spent,remaining};
+  const plannedAmount=planned.reduce((a,e)=>a+(Number(e.amount)||0),0);
+  const remaining=variableBudget-spent-plannedAmount;
+  return {s,totalIncome,minimum,fixed,target,extra,allowance,extraSavings,plannedSavings,variableBudget,es,planned,spent,plannedAmount,remaining};
 }
 function getDayInfo(){
   const d=new Date(), last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(), day=d.getDate();
@@ -38,7 +42,7 @@ function calc(){
   const daily=Math.max(0,n.remaining)/d.remainingDays;
   const elapsed=Math.max(1,d.day);
   const avg=n.spent/elapsed;
-  const projected=n.spent/d.day*d.last;
+  const projected=n.spent/d.day*d.last+n.plannedAmount;
   const todayBudget=n.remaining>0?Math.max(0,n.remaining)/d.remainingDays:0;
   const pacePct=n.variableBudget>0?n.spent/n.variableBudget*100:0;
   const expectedPct=d.day/d.last*100;
@@ -82,8 +86,8 @@ function renderForecast(n,projected,d){
     return;
   }
   const isOver=projected>n.variableBudget;
-  message.textContent=isOver?`このペースだと月末に${yen(projected-n.variableBudget)}オーバー`:`このペースなら月末に${yen(n.variableBudget-projected)}余る見込み`;
-  detail.textContent=`現在の1日平均 ${yen(n.spent/d.day)}・残り${d.remainingDays}日`;
+  message.textContent=isOver?`実績ペース＋予定支出で、月末に${yen(projected-n.variableBudget)}オーバーの見込み`:`実績ペース＋予定支出でも、月末に${yen(n.variableBudget-projected)}余る見込み`;
+  detail.textContent=`現在の1日平均 ${yen(n.spent/d.day)}・予定支出 ${yen(n.plannedAmount)}・残り${d.remainingDays}日`;
   if(isOver){
     const dailyLimit=Math.max(0,n.remaining)/Math.max(1,d.remainingDays);
     advice.textContent=`予算オーバーを防ぐには、残りは1日あたり${yen(dailyLimit)}までに抑えましょう`;
@@ -105,13 +109,22 @@ function renderExpenses(){
   if(!es.length){list.innerHTML='<div class="muted expense-empty">まだ支出はありません。</div>';return;}
   list.innerHTML=`<table class="expense-table"><thead><tr><th>日付</th><th>メモ</th><th>カテゴリ</th><th class="amount-col">金額</th><th class="action-col"></th></tr></thead><tbody>${es.map(e=>`<tr data-id="${e.id||""}"><td>${escapeHtml(e.date)}</td><td>${e.memo?escapeHtml(e.memo):'<span class="muted">—</span>'}</td><td>${escapeHtml(e.category)}</td><td class="amount-col"><strong>${yen(e.amount)}</strong></td><td class="action-col"><div class="expense-actions"><div class="move-buttons"><button type="button" class="move-btn" data-move="up" data-id="${e.id}" aria-label="同じ日付内で上へ">▲</button><button type="button" class="move-btn" data-move="down" data-id="${e.id}" aria-label="同じ日付内で下へ">▼</button></div><div class="edit-delete-buttons"><button type="button" class="edit-btn" data-edit="${e.id}">編集</button><button type="button" class="delete-btn" data-delete="${e.id}">削除</button></div></div></td></tr>`).join("")}</tbody></table>`;
 }
+function renderPlannedExpenses(){
+  const list=$("plannedList"), es=monthPlannedExpenses().slice().sort((a,b)=>String(a.date).localeCompare(String(b.date)) || Number(a.id)-Number(b.id)), total=es.reduce((sum,e)=>sum+(Number(e.amount)||0),0);
+  $("plannedTotal").textContent=`合計：${yen(total)}`;
+  if(!es.length){list.innerHTML='<div class="muted expense-empty">予定支出はありません。</div>';return;}
+  list.innerHTML=`<table class="expense-table planned-expense-table"><thead><tr><th>予定日</th><th>メモ</th><th>カテゴリ</th><th class="amount-col">金額</th><th class="action-col"></th></tr></thead><tbody>${es.map(e=>`<tr data-id="${e.id||""}"><td>${escapeHtml(e.date)}</td><td>${e.memo?escapeHtml(e.memo):'<span class="muted">—</span>'}</td><td>${escapeHtml(e.category)}</td><td class="amount-col"><strong>${yen(e.amount)}</strong></td><td class="action-col"><div class="expense-actions"><div class="edit-delete-buttons"><button type="button" class="confirm-btn" data-confirm-planned="${e.id}">支出に確定</button><button type="button" class="edit-btn" data-edit-planned="${e.id}">編集</button><button type="button" class="delete-btn" data-delete-planned="${e.id}">削除</button></div></div></td></tr>`).join("")}</tbody></table>`;
+}
+function openPlannedEdit(id){const e=state.plannedExpenses.find(x=>String(x.id)===String(id));if(!e)return;$("plannedEditModal").dataset.id=String(id);$("plannedEditAmount").value=e.amount;$("plannedEditCategory").value=e.category;$("plannedEditMemo").value=e.memo||"";$("plannedEditDate").value=e.date;$("plannedEditModal").classList.remove("hidden");}
+function closePlannedEdit(){$("plannedEditModal").classList.add("hidden");}
+function confirmPlanned(id){const idx=state.plannedExpenses.findIndex(x=>String(x.id)===String(id));if(idx<0)return;const p=state.plannedExpenses[idx];state.expenses.push({id:Date.now()+Math.random(),amount:Number(p.amount)||0,category:p.category,memo:p.memo||"",date:p.date||today});state.plannedExpenses.splice(idx,1);save();renderPlannedExpenses();renderExpenses();calc();}
 function escapeHtml(str){return String(str).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
 function renderBudgetProgress(budget,spent){
   const pct=budget>0?Math.min(100,spent/budget*100):0;$("budgetProgressText").textContent=`${yen(spent)} / ${yen(Math.max(0,budget))}`;$("budgetProgressBar").style.width=pct+"%";$("budgetProgressPercent").textContent=Math.round(pct)+"%";
   const d=getDayInfo();let status="データを入力すると表示されます";if(budget<=0)status="予算を設定してください";else if(spent>budget)status=`予算を${yen(spent-budget)}オーバー`;else status=pct<=d.day/d.last*100+5?"順調なペース　この調子！":"やや速いペース";$("budgetStatus").textContent=status;
 }
 function renderCategoryChart(es){
-  const categories=["食費","日用品","水光熱費","交通費","娯楽","外食","その他"], totals=categories.map(c=>({name:c,value:es.filter(e=>e.category===c).reduce((a,e)=>a+(Number(e.amount)||0),0)})),total=totals.reduce((a,x)=>a+x.value,0),chart=$("categoryChart"),legend=$("categoryLegend");
+  const categories=["食費","日用品","水光熱費","交通費","美容","医療関係","娯楽","外食","その他"], totals=categories.map(c=>({name:c,value:es.filter(e=>e.category===c).reduce((a,e)=>a+(Number(e.amount)||0),0)})),total=totals.reduce((a,x)=>a+x.value,0),chart=$("categoryChart"),legend=$("categoryLegend");
   if(!total){chart.innerHTML='<div class="donut-empty">まだ支出がありません</div>';legend.innerHTML="";return;}
   let cursor=0,stops=[];totals.filter(x=>x.value>0).forEach((x,i)=>{const start=cursor;cursor+=x.value/total*360;stops.push(`hsl(${i*48},55%,55%) ${start}deg ${cursor}deg`);});
   chart.innerHTML=`<div class="donut" style="background:conic-gradient(${stops.join(",")})"><div class="donut-hole"><b>${yen(total)}</b><span>今月</span></div></div>`;
@@ -136,9 +149,11 @@ function renderSavingsChart(){
 }
 $("saveIncome").onclick=()=>{state.income=Math.max(0,Number($("income").value)||0);state.bonus=Math.max(0,Number($("bonus").value)||0);save();calc();};
 $("saveSettings").onclick=()=>{const allowance=Math.min(100,Math.max(0,Number($("extraAllowancePercent").value)||0)),savings=Math.min(100,Math.max(0,Number($("extraSavingsPercent").value)||0));state.settings={minimumTakeHome:Math.max(0,Number($("minimumTakeHome").value)||0),fixedCosts:Math.max(0,Number($("fixedCosts").value)||0),savingsTarget:Math.max(0,Number($("savingsTarget").value)||0),extraAllowancePercent:allowance,extraSavingsPercent:savings};save();calc();};
+$("addPlannedExpense").onclick=()=>{const amount=Math.max(0,Number($("plannedAmount").value)||0);if(!amount){alert("金額を入力してください");return}state.plannedExpenses.push({id:Date.now()+Math.random(),amount,category:$("plannedCategory").value,memo:$("plannedMemo").value.trim(),date:$("plannedDate").value||today});$("plannedAmount").value="";$("plannedMemo").value="";save();renderPlannedExpenses();calc();};
+$("plannedDate").value=today;
 $("addExpense").onclick=()=>{const amount=Math.max(0,Number($("expenseAmount").value)||0);if(!amount){alert("金額を入力してください");return}state.expenses.push({id:Date.now()+Math.random(),amount,category:$("expenseCategory").value,memo:$("expenseMemo").value.trim(),date:$("expenseDate").value||today});$("expenseAmount").value="";$("expenseMemo").value="";save();calc();renderExpenses();};
 $("categoryQuick").addEventListener("click",e=>{const btn=e.target.closest("[data-category]");if(!btn)return;$("expenseCategory").value=btn.dataset.category;document.querySelectorAll("#categoryQuick button").forEach(b=>b.classList.toggle("selected",b===btn));});
-loadSettings();renderExpenses();calc();
+loadSettings();renderPlannedExpenses();renderExpenses();calc();
 const sectionPrefs=JSON.parse(localStorage.getItem("moneyRuleSectionPrefs")||"{}"),statPrefs=JSON.parse(localStorage.getItem("moneyRuleStatPrefs")||"{}");
 function applyStatPrefs(){const hidden=statPrefs.income===true;["incomeStat","extraIncomeStat"].forEach(id=>{const el=$(id);if(el)el.classList.toggle("stat-hidden",hidden)});const restore=$("incomeRestore");if(restore)restore.classList.toggle("hidden",!hidden);}
 function applySectionPrefs(){document.querySelectorAll("[data-section-content]").forEach(section=>{const key=section.dataset.sectionContent,hidden=sectionPrefs[key]===true;section.querySelectorAll(":scope > *:not(.section-title)").forEach(child=>child.classList.toggle("section-body-hidden",hidden));});document.querySelectorAll(".minus-btn").forEach(btn=>{const hidden=sectionPrefs[btn.dataset.section]===true;btn.textContent=hidden?"＋":"−";btn.title=hidden?"表示する":"非表示にする";btn.setAttribute("aria-label",hidden?"表示する":"非表示にする")});}
@@ -146,6 +161,9 @@ function toggleSection(key){if(!key)return;sectionPrefs[key]=sectionPrefs[key]!=
 function toggleIncomeStat(hidden){statPrefs.income=hidden;localStorage.setItem("moneyRuleStatPrefs",JSON.stringify(statPrefs));applyStatPrefs();}
 function restoreIncomeStat(){statPrefs.income=false;localStorage.setItem("moneyRuleStatPrefs",JSON.stringify(statPrefs));const restore=$("incomeRestore");const income=$("incomeStat"),extra=$("extraIncomeStat");if(income)income.classList.remove("stat-hidden");if(extra)extra.classList.remove("stat-hidden");if(restore)restore.classList.add("hidden");}
 document.addEventListener("click",event=>{const minus=event.target.closest(".minus-btn");if(minus){toggleSection(minus.dataset.section);return}const statToggle=event.target.closest('.stat-toggle-btn[data-stat="income"]');if(statToggle){toggleIncomeStat(true);return}const restore=event.target.closest("#incomeRestore button");if(restore){event.preventDefault();restoreIncomeStat();return}});
+$("closePlannedModal").onclick=closePlannedEdit;$("cancelPlannedEdit").onclick=closePlannedEdit;$("plannedEditModal").onclick=e=>{if(e.target===$("plannedEditModal"))closePlannedEdit()};
+$("savePlannedEdit").onclick=()=>{const id=$("plannedEditModal").dataset.id,e=state.plannedExpenses.find(x=>String(x.id)===String(id)),amount=Math.max(0,Number($("plannedEditAmount").value)||0);if(!e||!amount){alert("金額を入力してください");return}e.amount=amount;e.category=$("plannedEditCategory").value;e.memo=$("plannedEditMemo").value.trim();e.date=$("plannedEditDate").value||today;save();closePlannedEdit();renderPlannedExpenses();calc();};
+$("plannedList").addEventListener("click",event=>{const confirm=event.target.closest("[data-confirm-planned]"),edit=event.target.closest("[data-edit-planned]"),del=event.target.closest("[data-delete-planned]");if(confirm){event.preventDefault();confirmPlanned(confirm.dataset.confirmPlanned);return}if(edit){event.preventDefault();openPlannedEdit(edit.dataset.editPlanned);return}if(del){event.preventDefault();const id=del.dataset.deletePlanned,idx=state.plannedExpenses.findIndex(x=>String(x.id)===String(id));if(idx>=0){state.plannedExpenses.splice(idx,1);save();renderPlannedExpenses();calc();}}});
 function openEdit(id){const e=state.expenses.find(x=>String(x.id)===String(id));if(!e)return;$("editModal").dataset.id=String(id);$("editAmount").value=e.amount;$("editCategory").value=e.category;$("editMemo").value=e.memo||"";$("editDate").value=e.date;$("editModal").classList.remove("hidden");}
 function closeEdit(){$("editModal").classList.add("hidden");}
 $("closeModal").onclick=closeEdit;$("cancelEdit").onclick=closeEdit;$("editModal").onclick=e=>{if(e.target===$("editModal"))closeEdit()};
