@@ -13,11 +13,11 @@
     <p>収入・固定費・貯金を先に整理して、今月使える金額を自動計算。</p>
   </header>
 
-  <section class="card">
+  <section class="card quick-entry">
     <h2>支出を記録</h2>
     <div class="grid">
       <label>金額
-        <input id="expenseAmount" type="number" min="0" step="100" placeholder="1500">
+        <input id="expenseAmount" type="number" min="0" step="100" inputmode="numeric" placeholder="1500">
       </label>
       <label>カテゴリ
         <select id="expenseCategory">
@@ -35,10 +35,62 @@
     <button id="addExpense">支出を追加</button>
   </section>
 
+  <section class="stats">
+    <div class="stat"><span>今月の収入</span><strong id="incomeView">¥0</strong></div>
+    <div class="stat"><span>超過分</span><strong id="extraIncome">¥0</strong></div>
+    <div class="stat"><span>今月の貯金予定</span><strong id="plannedSavings">¥0</strong></div>
+    <div class="stat"><span>今月使える予算</span><strong id="spendingBudget">¥0</strong></div>
+    <div class="stat"><span>今月使った金額</span><strong id="monthSpent">¥0</strong></div>
+    <div class="stat highlight"><span>今月の残り予算</span><strong id="remainingBudget">¥0</strong></div>
+    <div class="stat"><span>1日あたりの目安</span><strong id="dailyBudget">¥0</strong></div>
+    <div class="stat"><span>今月の支出件数</span><strong id="expenseCount">0件</strong></div>
+  </section>
+
+  <section class="card">
+    <h2>今月の支出ペース</h2>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>予算</span><strong id="budgetProgressText">¥0 / ¥0</strong></div>
+      <div class="progress"><div id="budgetProgressBar"></div></div>
+      <div class="progress-sub"><span id="budgetProgressPercent">0%</span><span id="budgetStatus">データを入力すると表示されます</span></div>
+    </div>
+  </section>
+
+  <section class="charts">
+    <div class="card chart-card">
+      <h2>カテゴリ別の支出</h2>
+      <div id="categoryChart" class="donut-chart"></div>
+      <div id="categoryLegend" class="legend"></div>
+    </div>
+
+    <div class="card chart-card">
+      <h2>日ごとの支出推移</h2>
+      <div class="line-chart-wrap">
+        <svg id="dailyChart" viewBox="0 0 700 260" role="img" aria-label="日ごとの支出推移"></svg>
+      </div>
+      <div id="dailyChartSummary" class="chart-summary"></div>
+    </div>
+
+    <div class="card chart-card">
+      <h2>月別の支出推移</h2>
+      <div class="line-chart-wrap">
+        <svg id="monthlyChart" viewBox="0 0 700 260" role="img" aria-label="月別の支出推移"></svg>
+      </div>
+      <div id="monthlyChartSummary" class="chart-summary"></div>
+    </div>
+
+    <div class="card chart-card">
+      <h2>月別の貯金額</h2>
+      <div class="bar-chart-wrap">
+        <svg id="savingsChart" viewBox="0 0 700 260" role="img" aria-label="月別の貯金額"></svg>
+      </div>
+      <div id="savingsChartSummary" class="chart-summary"></div>
+    </div>
+  </section>
+
   <section class="card">
     <h2>今月の収入</h2>
     <label>今月の手取り収入
-      <input id="income" type="number" min="0" step="1000" placeholder="300000">
+      <input id="income" type="number" min="0" step="1000" inputmode="numeric" placeholder="300000">
     </label>
     <button id="saveIncome">収入を保存</button>
   </section>
@@ -47,13 +99,13 @@
     <h2>家計ルール</h2>
     <div class="grid">
       <label>毎月の最低限の手取り
-        <input id="minimumTakeHome" type="number" min="0" step="1000" placeholder="250000">
+        <input id="minimumTakeHome" type="number" min="0" step="1000" inputmode="numeric" placeholder="250000">
       </label>
       <label>毎月の固定費
-        <input id="fixedCosts" type="number" min="0" step="1000" placeholder="150000">
+        <input id="fixedCosts" type="number" min="0" step="1000" inputmode="numeric" placeholder="150000">
       </label>
       <label>毎月の貯金目標
-        <input id="savingsTarget" type="number" min="0" step="1000" placeholder="50000">
+        <input id="savingsTarget" type="number" min="0" step="1000" inputmode="numeric" placeholder="50000">
       </label>
       <label>超過分のお小遣い割合（%）
         <input id="extraAllowancePercent" type="number" min="0" max="100" step="1" value="50">
@@ -63,16 +115,6 @@
       </label>
     </div>
     <button id="saveSettings">ルールを保存</button>
-  </section>
-
-  <section class="stats">
-    <div class="stat"><span>今月の収入</span><strong id="incomeView">¥0</strong></div>
-    <div class="stat"><span>超過分</span><strong id="extraIncome">¥0</strong></div>
-    <div class="stat"><span>今月の貯金予定</span><strong id="plannedSavings">¥0</strong></div>
-    <div class="stat"><span>今月使える予算</span><strong id="spendingBudget">¥0</strong></div>
-    <div class="stat"><span>今月使った金額</span><strong id="monthSpent">¥0</strong></div>
-    <div class="stat highlight"><span>今月の残り予算</span><strong id="remainingBudget">¥0</strong></div>
-    <div class="stat"><span>1日あたりの目安</span><strong id="dailyBudget">¥0</strong></div>
   </section>
 
   <section class="card">
