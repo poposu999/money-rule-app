@@ -81,3 +81,19 @@ button{margin-top:14px;border:0;border-radius:9px;padding:11px 16px;font-size:15
 .stats .stat-toggle-btn{right:8px;width:26px;height:26px;font-size:17px}
 @media(max-width:600px){.stats{grid-template-columns:1fr;gap:7px;padding:10px}.stats .section-title{padding-bottom:5px}.stats .stat{padding:9px 38px 9px 11px}.stats .stat strong{font-size:19px}.stats .stat span small{font-size:10px}}
 .forecast-advice{display:block;margin-top:9px;padding:9px 10px;border-radius:9px;background:#fff0f0;color:#b42318;font-weight:700;font-size:13px;}
+
+
+/* ver.21: 支出一覧をさらにコンパクト化。▲▼を横並びにして行高を抑える */
+.expense-actions{gap:5px}
+.move-buttons{flex-direction:row;gap:2px}
+.move-btn{width:18px;height:18px;font-size:8px;line-height:16px;padding:0}
+.edit-delete-buttons{gap:3px}
+.expense-table .action-col{min-width:96px}
+.expense-table th,.expense-table td{padding-top:2px;padding-bottom:2px;line-height:1.05}
+@media(max-width:600px){
+  .expense-actions{gap:4px}
+  .move-buttons{gap:1px}
+  .move-btn{width:17px;height:17px;font-size:7px;line-height:15px}
+  .expense-table .action-col{min-width:92px}
+  .expense-table th,.expense-table td{padding-top:2px;padding-bottom:2px}
+}
