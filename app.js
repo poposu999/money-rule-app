@@ -51,12 +51,6 @@ function calc(){
   $("dailyBudget").textContent=yen(daily);
   $("expenseCount").textContent=n.es.length+"件";
   $("allowanceStat").textContent=yen(n.allowance);
-  $("todayBudget").textContent=yen(todayBudget);
-  $("todayBudgetSub").textContent=n.remaining<0?`予算を${yen(Math.abs(n.remaining))}オーバーしています`:`残り${d.remainingDays}日で使える1日あたりの目安`;
-  $("dashboardRemaining").textContent=yen(n.remaining);
-  $("forecastSpend").textContent=yen(projected);
-  $("allowanceView").textContent=yen(n.allowance);
-  $("variableRemaining").textContent=yen(n.remaining);
   $("fixedCostsView").textContent=yen(n.fixed);
   $("savingsReserveView").textContent=yen(n.plannedSavings);
   $("variableBudgetView").textContent=yen(n.variableBudget);
@@ -70,6 +64,7 @@ function calc(){
 }
 function renderSpendingStatus(n,paceDelta,projected,d){
   const el=$("spendingStatus");
+  if(!el)return;
   el.className="spending-status";
   if(n.variableBudget<=0){el.classList.add("danger");el.textContent="使える予算を設定してください";return;}
   if(n.spent>n.variableBudget){el.classList.add("danger");el.textContent=`🔴 使いすぎ：予算を${yen(n.spent-n.variableBudget)}オーバー`;
@@ -137,6 +132,6 @@ function openEdit(id){const e=state.expenses.find(x=>String(x.id)===String(id));
 function closeEdit(){$("editModal").classList.add("hidden");}
 $("closeModal").onclick=closeEdit;$("cancelEdit").onclick=closeEdit;$("editModal").onclick=e=>{if(e.target===$("editModal"))closeEdit()};
 $("saveEdit").onclick=()=>{const id=$("editModal").dataset.id,e=state.expenses.find(x=>String(x.id)===String(id)),amount=Math.max(0,Number($("editAmount").value)||0);if(!e||!amount){alert("金額を入力してください");return}e.amount=amount;e.category=$("editCategory").value;e.memo=$("editMemo").value.trim();e.date=$("editDate").value||today;save();closeEdit();calc();renderExpenses();};
-function moveExpense(id,direction){const current=state.expenses.findIndex(x=>String(x.id)===String(id));if(current<0)return;const date=String(state.expenses[current].date||"");const step=direction==="up"?-1:1;let target=current+step;while(target>=0&&target<state.expenses.length&&String(state.expenses[target].date||"")!==date){target+=step;}if(target<0||target>=state.expenses.length)return;const tmp=state.expenses[current];state.expenses[current]=state.expenses[target];state.expenses[target]=tmp;save();renderExpenses();}
+function moveExpense(id,direction){const current=state.expenses.findIndex(x=>String(x.id)===String(id));if(current<0)return;const date=String(state.expenses[current].date||"");const sameDateIndexes=state.expenses.map((x,i)=>({x,i})).filter(({x})=>String(x.date||"")===date).map(({i})=>i);const pos=sameDateIndexes.indexOf(current);if(pos<0)return;const targetPos=direction==="up"?pos+1:pos-1;if(targetPos<0||targetPos>=sameDateIndexes.length)return;const target=sameDateIndexes[targetPos];const tmp=state.expenses[current];state.expenses[current]=state.expenses[target];state.expenses[target]=tmp;save();renderExpenses();}
 $("expenseList").addEventListener("click",event=>{const move=event.target.closest("[data-move]"),edit=event.target.closest("[data-edit]"),del=event.target.closest("[data-delete]");if(move){event.preventDefault();moveExpense(move.dataset.id,move.dataset.move);return}if(edit){event.preventDefault();openEdit(edit.dataset.edit);return}if(del){event.preventDefault();const id=del.dataset.delete,idx=state.expenses.findIndex(x=>String(x.id)===String(id));if(idx>=0){state.expenses.splice(idx,1);save();calc();renderExpenses();}}});
 applySectionPrefs();applyStatPrefs();
