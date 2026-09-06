@@ -153,6 +153,34 @@ $("addPlannedExpense").onclick=()=>{const amount=Math.max(0,Number($("plannedAmo
 $("plannedDate").value=today;
 $("addExpense").onclick=()=>{const amount=Math.max(0,Number($("expenseAmount").value)||0);if(!amount){alert("金額を入力してください");return}state.expenses.push({id:Date.now()+Math.random(),amount,category:$("expenseCategory").value,memo:$("expenseMemo").value.trim(),date:$("expenseDate").value||today});$("expenseAmount").value="";$("expenseMemo").value="";save();calc();renderExpenses();};
 $("categoryQuick").addEventListener("click",e=>{const btn=e.target.closest("[data-category]");if(!btn)return;$("expenseCategory").value=btn.dataset.category;document.querySelectorAll("#categoryQuick button").forEach(b=>b.classList.toggle("selected",b===btn));});
+
+function exportBackup(){
+  const data={format:"money-rule-backup",version:29,exportedAt:new Date().toISOString(),localStorage:{}};
+  for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key && key.startsWith("moneyRule")){data.localStorage[key]=localStorage.getItem(key);}}
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  const stamp=today.replaceAll("-","");a.href=url;a.download=`money-rule-backup-${stamp}.json`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+  const status=$("backupStatus");if(status)status.textContent="バックアップを書き出しました。";
+}
+function importBackupFile(file){
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(reader.result);
+      if(!data || data.format!=="money-rule-backup" || !data.localStorage || typeof data.localStorage!=="object")throw new Error("invalid");
+      if(!confirm("バックアップを読み込むと、現在の家計簿データがバックアップの内容に置き換わります。続行しますか？"))return;
+      Object.keys(data.localStorage).filter(k=>k.startsWith("moneyRule")).forEach(k=>localStorage.setItem(k,String(data.localStorage[k])));
+      const status=$("backupStatus");if(status)status.textContent="バックアップを読み込みました。ページを再読み込みします。";
+      setTimeout(()=>location.reload(),300);
+    }catch(e){alert("バックアップファイルを読み込めませんでした。家計簿から書き出したJSONファイルを選択してください。");}
+  };
+  reader.readAsText(file);
+}
+$("exportBackup").onclick=exportBackup;
+$("importBackupButton").onclick=()=>$("importBackup").click();
+$("importBackup").addEventListener("change",e=>{importBackupFile(e.target.files&&e.target.files[0]);e.target.value="";});
+
 loadSettings();renderPlannedExpenses();renderExpenses();calc();
 const sectionPrefs=JSON.parse(localStorage.getItem("moneyRuleSectionPrefs")||"{}"),statPrefs=JSON.parse(localStorage.getItem("moneyRuleStatPrefs")||"{}");
 function applyStatPrefs(){const hidden=statPrefs.income===true;["incomeStat","extraIncomeStat"].forEach(id=>{const el=$(id);if(el)el.classList.toggle("stat-hidden",hidden)});const restore=$("incomeRestore");if(restore)restore.classList.toggle("hidden",!hidden);}
