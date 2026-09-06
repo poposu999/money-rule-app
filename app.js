@@ -51,8 +51,11 @@ function loadSettings(){
 }
 function renderExpenses(){
   const list=$("expenseList"), es=monthExpenses().slice().reverse();
-  if(!es.length){list.innerHTML='<div class="muted">まだ支出はありません。</div>';return}
-  list.innerHTML=es.map((e)=>`<div class="expense" data-id="${e.id||""}"><div><b>${escapeHtml(e.category)}</b><div class="muted">${e.date}${e.memo?"・"+escapeHtml(e.memo):""}</div></div><div class="expense-right"><strong>${yen(e.amount)}</strong><button type="button" class="edit-btn" data-edit="${e.id}">編集</button><button type="button" class="delete-btn" data-delete="${e.id}">削除</button></div></div>`).join("");
+  const total=es.reduce((sum,e)=>sum+Number(e.amount||0),0);
+  const totalEl=$("expenseTotal");
+  if(totalEl) totalEl.textContent=`合計：${yen(total)}`;
+  if(!es.length){list.innerHTML='<div class="muted expense-empty">まだ支出はありません。</div>';return}
+  list.innerHTML=`<table class="expense-table"><thead><tr><th>日付</th><th>メモ</th><th>カテゴリ</th><th class="amount-col">金額</th><th class="action-col"></th></tr></thead><tbody>${es.map((e)=>`<tr data-id="${e.id||""}"><td>${escapeHtml(e.date)}</td><td>${e.memo?escapeHtml(e.memo):'<span class="muted">—</span>'}</td><td>${escapeHtml(e.category)}</td><td class="amount-col"><strong>${yen(e.amount)}</strong></td><td class="action-col"><button type="button" class="edit-btn" data-edit="${e.id}">編集</button><button type="button" class="delete-btn" data-delete="${e.id}">削除</button></td></tr>`).join("")}</tbody></table>`;
 }
 
 function escapeHtml(str){
