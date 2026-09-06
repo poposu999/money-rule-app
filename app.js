@@ -47,12 +47,13 @@ function loadSettings(){
 function renderExpenses(){
   const list=$("expenseList"), es=monthExpenses().slice().reverse();
   if(!es.length){list.innerHTML='<div class="muted">まだ支出はありません。</div>';return}
-  list.innerHTML=es.map((e)=>`<div class="expense" data-id="${e.id||""}"><div><b>${escapeHtml(e.category)}</b><div class="muted">${e.date}${e.memo?"・"+escapeHtml(e.memo):""}</div></div><div class="expense-right"><strong>${yen(e.amount)}</strong><button class="delete-btn" data-delete="${e.id}">削除</button></div></div>`).join("");
+  list.innerHTML=es.map((e)=>`<div class="expense" data-id="${e.id||""}"><div><b>${escapeHtml(e.category)}</b><div class="muted">${e.date}${e.memo?"・"+escapeHtml(e.memo):""}</div></div><div class="expense-right"><strong>${yen(e.amount)}</strong><button class="edit-btn" data-edit="${e.id}">編集</button><button class="delete-btn" data-delete="${e.id}">削除</button></div></div>`).join("");
   list.querySelectorAll("[data-delete]").forEach(btn=>btn.onclick=()=>{
     const id=btn.dataset.delete;
     const idx=state.expenses.findIndex(e=>String(e.id)===String(id));
     if(idx>=0){state.expenses.splice(idx,1);save();calc();renderExpenses();}
   });
+  list.querySelectorAll("[data-edit]").forEach(btn=>btn.onclick=()=>openEdit(btn.dataset.edit));
 }
 function escapeHtml(str){
   return String(str).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
@@ -155,3 +156,48 @@ $("addExpense").onclick=()=>{
   save();calc();renderExpenses();
 };
 loadSettings();calc();renderExpenses();
+
+const sectionPrefs=JSON.parse(localStorage.getItem("moneyRuleSectionPrefs")||"{}");
+function applySectionPrefs(){
+  document.querySelectorAll("[data-section-content]").forEach(el=>{
+    const key=el.dataset.sectionContent;
+    el.classList.toggle("section-hidden",sectionPrefs[key]===true);
+  });
+  document.querySelectorAll(".minus-btn").forEach(btn=>{
+    const key=btn.dataset.section;
+    btn.textContent=sectionPrefs[key]===true?"＋":"−";
+    btn.title=sectionPrefs[key]===true?"表示する":"非表示にする";
+  });
+}
+document.querySelectorAll(".minus-btn").forEach(btn=>btn.onclick=()=>{
+  const key=btn.dataset.section;
+  sectionPrefs[key]=sectionPrefs[key]!==true;
+  localStorage.setItem("moneyRuleSectionPrefs",JSON.stringify(sectionPrefs));
+  applySectionPrefs();
+});
+function openEdit(id){
+  const e=state.expenses.find(x=>String(x.id)===String(id));
+  if(!e)return;
+  $("editModal").dataset.id=id;
+  $("editAmount").value=e.amount;
+  $("editCategory").value=e.category;
+  $("editMemo").value=e.memo||"";
+  $("editDate").value=e.date;
+  $("editModal").classList.remove("hidden");
+}
+function closeEdit(){$("editModal").classList.add("hidden");}
+$("closeModal").onclick=closeEdit;
+$("cancelEdit").onclick=closeEdit;
+$("editModal").onclick=e=>{if(e.target===$("editModal"))closeEdit();};
+$("saveEdit").onclick=()=>{
+  const id=$("editModal").dataset.id;
+  const e=state.expenses.find(x=>String(x.id)===String(id));
+  const amount=Math.max(0,Number($("editAmount").value)||0);
+  if(!e||!amount){alert("金額を入力してください");return}
+  e.amount=amount;
+  e.category=$("editCategory").value;
+  e.memo=$("editMemo").value.trim();
+  e.date=$("editDate").value||today;
+  save();closeEdit();calc();renderExpenses();
+};
+applySectionPrefs();
