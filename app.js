@@ -25,7 +25,7 @@ function getNumbers(){
   const allowance=extra*allowancePct/100;
   const extraSavings=extra*savingsPct/100;
   const plannedSavings=target+extraSavings;
-  const variableBudget=Math.max(0,totalIncome-fixed-target+allowance);
+  const variableBudget=Math.max(0,minimum-fixed+allowance);
   const es=monthExpenses();
   const planned=monthPlannedExpenses();
   const spent=es.reduce((a,e)=>a+(Number(e.amount)||0),0);
