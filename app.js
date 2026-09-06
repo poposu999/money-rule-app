@@ -1,7 +1,8 @@
 const KEY="moneyRuleAppV2";
 const defaultState={settings:{minimumTakeHome:250000,fixedCosts:150000,savingsTarget:50000,extraAllowancePercent:50,extraSavingsPercent:50},income:0,bonus:0,expenses:[]};
 let state;
-const today=new Date().toISOString().slice(0,10);
+const now=new Date();
+const today=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
 try{state=JSON.parse(localStorage.getItem(KEY)||JSON.stringify(defaultState));}catch(e){state=JSON.parse(JSON.stringify(defaultState));}
 state.settings={...defaultState.settings,...(state.settings||{})};
 state.expenses=(Array.isArray(state.expenses)?state.expenses:[]).filter(e=>e&&typeof e==="object").map(e=>({...e,amount:Number(e.amount)||0,date:String(e.date||today||""),category:String(e.category||"その他"),memo:String(e.memo||"")}));
@@ -74,8 +75,25 @@ function renderSpendingStatus(n,paceDelta,projected,d){
   }
 }
 function renderForecast(n,projected,d){
-  $("forecastMessage").textContent=n.spent===0?"まだ支出がないため予測できません":projected>n.variableBudget?`このペースだと月末に${yen(projected-n.variableBudget)}オーバー`: `このペースなら月末に${yen(n.variableBudget-projected)}余る見込み`;
-  $("forecastDetail").textContent=n.spent===0?"支出を記録すると月末予測が表示されます":`現在の1日平均 ${yen(n.spent/d.day)}・残り${d.remainingDays}日`;
+  const message=$("forecastMessage"),detail=$("forecastDetail"),advice=$("forecastAdvice");
+  if(n.spent===0){
+    message.textContent="まだ支出がないため予測できません";
+    detail.textContent="支出を記録すると月末予測が表示されます";
+    advice.textContent="";
+    advice.className="";
+    return;
+  }
+  const isOver=projected>n.variableBudget;
+  message.textContent=isOver?`このペースだと月末に${yen(projected-n.variableBudget)}オーバー`:`このペースなら月末に${yen(n.variableBudget-projected)}余る見込み`;
+  detail.textContent=`現在の1日平均 ${yen(n.spent/d.day)}・残り${d.remainingDays}日`;
+  if(isOver){
+    const dailyLimit=Math.max(0,n.remaining)/Math.max(1,d.remainingDays);
+    advice.textContent=`予算オーバーを防ぐには、残りは1日あたり${yen(dailyLimit)}までに抑えましょう`;
+    advice.className="forecast-advice";
+  }else{
+    advice.textContent="";
+    advice.className="";
+  }
 }
 function loadSettings(){
   const s=state.settings;

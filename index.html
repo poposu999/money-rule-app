@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>家計簿</title>
-<link rel="stylesheet" href="style.css?v=19">
+<link rel="stylesheet" href="style.css?v=20">
 </head>
 <body>
 <main class="container">
   <header>
-    <h1>家計簿 <span class="app-version">ver.19</span></h1>
+    <h1>家計簿 <span class="app-version">ver.20</span></h1>
     <p>収入・固定費・貯金を先に整理して、今月使える金額を自動計算。</p>
   </header>
   <section class="card quick-entry" data-section-content="quick-entry">
@@ -59,13 +59,13 @@
     <div class="stat"><span>1日あたりの目安 <small>（残り予算 ÷ 残り日数）</small></span><strong id="dailyBudget">¥0</strong></div>
     <div class="stat"><span>今月使った金額</span><strong id="monthSpent">¥0</strong></div>
     <div class="stat"><span>今月の支出件数</span><strong id="expenseCount">0件</strong></div>
-    <div class="stat" id="incomeStat"><span>今月の収入</span><strong id="incomeView">¥0</strong><button type="button" class="stat-toggle-btn" data-stat="income" title="非表示にする">−</button></div>
+    <div class="stat" id="incomeStat"><span>前月の収入</span><strong id="incomeView">¥0</strong><button type="button" class="stat-toggle-btn" data-stat="income" title="非表示にする">−</button></div>
     <div class="stat" id="extraIncomeStat"><span>毎月の最低限の手取りからの超過分</span><strong id="extraIncome">¥0</strong></div>
     <div class="stat"><span>今月の貯金予定</span><strong id="plannedSavings">¥0</strong></div>
     <div class="stat"><span>今月使える予算</span><strong id="spendingBudget">¥0</strong></div>
     <div class="stat"><span>今月のお小遣い枠</span><strong id="allowanceStat">¥0</strong></div>
   </section>
-  <div id="incomeRestore" class="income-restore hidden"><button type="button" class="secondary-btn">今月の収入を表示</button></div>
+  <div id="incomeRestore" class="income-restore hidden"><button type="button" class="secondary-btn">前月の収入を表示</button></div>
   <section class="card" data-section-content="progress">
     <div class="section-title"><h2>今月の支出ペース</h2><button class="minus-btn" data-section="progress">−</button></div>
     <div class="progress-wrap">
@@ -76,7 +76,7 @@
   </section>
   <section class="card forecast-card" data-section-content="forecast">
     <div class="section-title"><h2>使いすぎ予測</h2><button class="minus-btn" data-section="forecast">−</button></div>
-    <div class="forecast-main"><strong id="forecastMessage">データを入力してください</strong><span id="forecastDetail"></span></div>
+    <div class="forecast-main"><strong id="forecastMessage">データを入力してください</strong><span id="forecastDetail"></span><span id="forecastAdvice"></span></div>
   </section>
   <section class="charts" data-section-content="charts">
     <div class="section-title full"><h2>グラフ</h2><button class="minus-btn" data-section="charts">−</button></div>
@@ -155,6 +155,6 @@
     </div>
   </div>
 </main>
-<script src="app.js?v=19"></script>
+<script src="app.js?v=20"></script>
 </body>
 </html>

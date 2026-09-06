@@ -80,3 +80,4 @@ button{margin-top:14px;border:0;border-radius:9px;padding:11px 16px;font-size:15
 .stats .stat strong{font-size:20px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .stats .stat-toggle-btn{right:8px;width:26px;height:26px;font-size:17px}
 @media(max-width:600px){.stats{grid-template-columns:1fr;gap:7px;padding:10px}.stats .section-title{padding-bottom:5px}.stats .stat{padding:9px 38px 9px 11px}.stats .stat strong{font-size:19px}.stats .stat span small{font-size:10px}}
+.forecast-advice{display:block;margin-top:9px;padding:9px 10px;border-radius:9px;background:#fff0f0;color:#b42318;font-weight:700;font-size:13px;}
