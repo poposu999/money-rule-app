@@ -156,7 +156,7 @@ const sectionPrefs=JSON.parse(localStorage.getItem("moneyRuleSectionPrefs")||"{}
 function applySectionPrefs(){
   document.querySelectorAll("[data-section-content]").forEach(el=>{
     const key=el.dataset.sectionContent;
-    el.classList.toggle("section-hidden",sectionPrefs[key]===true);
+    el.querySelectorAll(":scope > *:not(.section-title)").forEach(child=>child.classList.toggle("section-body-hidden",sectionPrefs[key]===true));
   });
   document.querySelectorAll(".minus-btn").forEach(btn=>{
     const key=btn.dataset.section;
