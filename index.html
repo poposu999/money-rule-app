@@ -14,6 +14,28 @@
   </header>
 
   <section class="card">
+    <h2>支出を記録</h2>
+    <div class="grid">
+      <label>金額
+        <input id="expenseAmount" type="number" min="0" step="100" placeholder="1500">
+      </label>
+      <label>カテゴリ
+        <select id="expenseCategory">
+          <option>食費</option><option>日用品</option><option>交通費</option>
+          <option>娯楽</option><option>外食</option><option>その他</option>
+        </select>
+      </label>
+      <label>メモ
+        <input id="expenseMemo" type="text" placeholder="昼ごはん">
+      </label>
+      <label>日付
+        <input id="expenseDate" type="date">
+      </label>
+    </div>
+    <button id="addExpense">支出を追加</button>
+  </section>
+
+  <section class="card">
     <h2>今月の収入</h2>
     <label>今月の手取り収入
       <input id="income" type="number" min="0" step="1000" placeholder="300000">
@@ -51,28 +73,6 @@
     <div class="stat"><span>今月使った金額</span><strong id="monthSpent">¥0</strong></div>
     <div class="stat highlight"><span>今月の残り予算</span><strong id="remainingBudget">¥0</strong></div>
     <div class="stat"><span>1日あたりの目安</span><strong id="dailyBudget">¥0</strong></div>
-  </section>
-
-  <section class="card">
-    <h2>支出を記録</h2>
-    <div class="grid">
-      <label>金額
-        <input id="expenseAmount" type="number" min="0" step="100" placeholder="1500">
-      </label>
-      <label>カテゴリ
-        <select id="expenseCategory">
-          <option>食費</option><option>日用品</option><option>交通費</option>
-          <option>娯楽</option><option>外食</option><option>その他</option>
-        </select>
-      </label>
-      <label>メモ
-        <input id="expenseMemo" type="text" placeholder="昼ごはん">
-      </label>
-      <label>日付
-        <input id="expenseDate" type="date">
-      </label>
-    </div>
-    <button id="addExpense">支出を追加</button>
   </section>
 
   <section class="card">
