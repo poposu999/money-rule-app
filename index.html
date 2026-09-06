@@ -34,14 +34,14 @@
     <button id="addExpense">支出を追加</button>
   </section><section class="stats" data-section-content="stats">
     <div class="section-title full"><h2>今月の状況</h2><button class="minus-btn" data-section="stats">−</button></div>
-    <div class="stat"><span>今月の収入</span><strong id="incomeView">¥0</strong></div>
-    <div class="stat"><span>超過分</span><strong id="extraIncome">¥0</strong></div>
-    <div class="stat"><span>今月の貯金予定</span><strong id="plannedSavings">¥0</strong></div>
-    <div class="stat"><span>今月使える予算</span><strong id="spendingBudget">¥0</strong></div>
-    <div class="stat"><span>今月使った金額</span><strong id="monthSpent">¥0</strong></div>
     <div class="stat highlight"><span>今月の残り予算</span><strong id="remainingBudget">¥0</strong></div>
     <div class="stat"><span>1日あたりの目安</span><strong id="dailyBudget">¥0</strong></div>
+    <div class="stat"><span>今月使った金額</span><strong id="monthSpent">¥0</strong></div>
     <div class="stat"><span>今月の支出件数</span><strong id="expenseCount">0件</strong></div>
+    <div class="stat" id="incomeStat"><span>今月の収入</span><strong id="incomeView">¥0</strong><button type="button" class="stat-toggle-btn" data-stat="income" title="非表示にする">−</button></div>
+    <div class="stat" id="extraIncomeStat"><span>毎月の最低限の手取りからの超過分</span><strong id="extraIncome">¥0</strong></div>
+    <div class="stat"><span>今月の貯金予定</span><strong id="plannedSavings">¥0</strong></div>
+    <div class="stat"><span>今月使える予算</span><strong id="spendingBudget">¥0</strong></div>
   </section> <section class="card" data-section-content="progress">
     <div class="section-title"><h2>今月の支出ペース</h2><button class="minus-btn" data-section="progress">−</button></div>
     <div class="progress-wrap">

@@ -153,6 +153,17 @@ $("addExpense").onclick=()=>{
 loadSettings();calc();renderExpenses();
 
 const sectionPrefs=JSON.parse(localStorage.getItem("moneyRuleSectionPrefs")||"{}");
+const statPrefs=JSON.parse(localStorage.getItem("moneyRuleStatPrefs")||"{}");
+function applyStatPrefs(){
+  const hidden=statPrefs.income===true;
+  $("incomeStat").classList.toggle("stat-hidden",hidden);
+  $("extraIncomeStat").classList.toggle("stat-hidden",hidden);
+  const btn=document.querySelector('.stat-toggle-btn[data-stat="income"]');
+  if(btn){
+    btn.textContent=hidden?"＋":"−";
+    btn.title=hidden?"表示する":"非表示にする";
+  }
+}
 function applySectionPrefs(){
   document.querySelectorAll("[data-section-content]").forEach(el=>{
     const key=el.dataset.sectionContent;
@@ -170,6 +181,11 @@ document.querySelectorAll(".minus-btn").forEach(btn=>btn.onclick=()=>{
   localStorage.setItem("moneyRuleSectionPrefs",JSON.stringify(sectionPrefs));
   applySectionPrefs();
 });
+document.querySelector('.stat-toggle-btn[data-stat="income"]').onclick=()=>{
+  statPrefs.income=statPrefs.income!==true;
+  localStorage.setItem("moneyRuleStatPrefs",JSON.stringify(statPrefs));
+  applyStatPrefs();
+};
 function openEdit(id){
   const e=state.expenses.find(x=>String(x.id)===String(id));
   if(!e)return;
@@ -196,6 +212,7 @@ $("saveEdit").onclick=()=>{
   save();closeEdit();calc();renderExpenses();
 };
 applySectionPrefs();
+applyStatPrefs();
 
 $("expenseList").addEventListener("click",e=>{
   const edit=e.target.closest("[data-edit]");
@@ -211,3 +228,4 @@ $("expenseList").addEventListener("click",e=>{
   }
 });
 applySectionPrefs();
+applyStatPrefs();
