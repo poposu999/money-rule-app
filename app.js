@@ -51,12 +51,6 @@ function calc(){
   $("dailyBudget").textContent=yen(daily);
   $("expenseCount").textContent=n.es.length+"件";
   $("allowanceStat").textContent=yen(n.allowance);
-  $("todayBudget").textContent=yen(todayBudget);
-  $("todayBudgetSub").textContent=n.remaining<0?`予算を${yen(Math.abs(n.remaining))}オーバーしています`:`残り${d.remainingDays}日で使える1日あたりの目安`;
-  $("dashboardRemaining").textContent=yen(n.remaining);
-  $("forecastSpend").textContent=yen(projected);
-  $("allowanceView").textContent=yen(n.allowance);
-  $("variableRemaining").textContent=yen(n.remaining);
   $("fixedCostsView").textContent=yen(n.fixed);
   $("savingsReserveView").textContent=yen(n.plannedSavings);
   $("variableBudgetView").textContent=yen(n.variableBudget);
@@ -89,7 +83,7 @@ function loadSettings(){
   $("income").value=state.income||"";$("bonus").value=state.bonus||"";
 }
 function renderExpenses(){
-  const list=$("expenseList"), es=monthExpenses().slice().reverse(), total=es.reduce((sum,e)=>sum+(Number(e.amount)||0),0);
+  const list=$("expenseList"), es=monthExpenses().slice().sort((a,b)=>String(a.date).localeCompare(String(b.date)) || Number(a.id)-Number(b.id)), total=es.reduce((sum,e)=>sum+(Number(e.amount)||0),0);
   $("expenseTotal").textContent=`合計：${yen(total)}`;
   if(!es.length){list.innerHTML='<div class="muted expense-empty">まだ支出はありません。</div>';return;}
   list.innerHTML=`<table class="expense-table"><thead><tr><th>日付</th><th>メモ</th><th>カテゴリ</th><th class="amount-col">金額</th><th class="action-col"></th></tr></thead><tbody>${es.map(e=>`<tr data-id="${e.id||""}"><td>${escapeHtml(e.date)}</td><td>${e.memo?escapeHtml(e.memo):'<span class="muted">—</span>'}</td><td>${escapeHtml(e.category)}</td><td class="amount-col"><strong>${yen(e.amount)}</strong></td><td class="action-col"><div class="expense-actions"><div class="move-buttons"><button type="button" class="move-btn" data-move="up" data-id="${e.id}" aria-label="同じ日付内で上へ">▲</button><button type="button" class="move-btn" data-move="down" data-id="${e.id}" aria-label="同じ日付内で下へ">▼</button></div><div class="edit-delete-buttons"><button type="button" class="edit-btn" data-edit="${e.id}">編集</button><button type="button" class="delete-btn" data-delete="${e.id}">削除</button></div></div></td></tr>`).join("")}</tbody></table>`;
