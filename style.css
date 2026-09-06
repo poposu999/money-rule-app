@@ -41,7 +41,7 @@ button{margin-top:14px;border:0;border-radius:9px;padding:11px 16px;font-size:15
 .stat-toggle-btn{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:30px;height:30px;border:1px solid #d1d5db;border-radius:8px;background:#fff;font-size:20px;line-height:1;cursor:pointer;}
 .stat-hidden{display:none!important;}
 
-.income-restore{display:flex;justify-content:center;margin:8px 0 16px;}
+.income-restore{display:flex;justify-content:center;margin:2px 0 0;padding-top:2px}.income-restore .secondary-btn{font-size:13px;padding:6px 10px}
 .income-restore.hidden{display:none!important;}
 
 
@@ -83,7 +83,7 @@ button{margin-top:14px;border:0;border-radius:9px;padding:11px 16px;font-size:15
 .forecast-advice{display:block;margin-top:9px;padding:9px 10px;border-radius:9px;background:#fff0f0;color:#b42318;font-weight:700;font-size:13px;}
 
 
-/* ver.21: 支出一覧をさらにコンパクト化。▲▼を横並びにして行高を抑える */
+/* ver.22: 支出一覧をさらにコンパクト化。▲▼を横並びにして行高を抑える */
 .expense-actions{gap:5px}
 .move-buttons{flex-direction:row;gap:2px}
 .move-btn{width:18px;height:18px;font-size:8px;line-height:16px;padding:0}
@@ -97,3 +97,26 @@ button{margin-top:14px;border:0;border-radius:9px;padding:11px 16px;font-size:15
   .expense-table .action-col{min-width:92px}
   .expense-table th,.expense-table td{padding-top:2px;padding-bottom:2px}
 }
+
+/* ver.22: スマホで支出一覧を横スクロールなしで確認できるよう最適化 */
+@media(max-width:600px){
+  .expense-table-wrap{overflow-x:hidden}
+  .expense-table{width:100%;min-width:0;table-layout:fixed;font-size:11px}
+  .expense-table th,.expense-table td{padding:3px 3px;overflow:hidden;text-overflow:ellipsis}
+  .expense-table th:nth-child(1),.expense-table td:nth-child(1){width:46px}
+  .expense-table th:nth-child(2),.expense-table td:nth-child(2){width:auto;min-width:0}
+  .expense-table th:nth-child(3),.expense-table td:nth-child(3){width:52px}
+  .expense-table th:nth-child(4),.expense-table td:nth-child(4){width:62px}
+  .expense-table th:nth-child(5),.expense-table td:nth-child(5){width:88px}
+  .expense-table .action-col{min-width:0}
+  .expense-actions{gap:2px;justify-content:flex-end}
+  .move-buttons{gap:1px;flex-shrink:0}
+  .move-btn{width:15px;height:15px;font-size:6px;line-height:13px}
+  .edit-delete-buttons{gap:2px;flex-shrink:0}
+  .expense-table .edit-btn,.expense-table .delete-btn{padding:2px 4px;font-size:9px}
+  .expense-table td:nth-child(2){white-space:nowrap}
+}
+
+
+/* ver.23: 「前月の収入を表示」を今月の状況の白枠内に配置し、表示ボタンを＋記号付きに調整 */
+@media(max-width:600px){.income-restore .secondary-btn{font-size:12px;padding:5px 9px}}
