@@ -107,15 +107,14 @@
     <div id="incomeRestore" class="income-restore"><button type="button" class="secondary-btn">前月の収入を非表示</button></div>
 </section>
   <section class="card" data-section-content="progress">
-    <div class="section-title"><h2>今月の支出ペース</h2><button class="minus-btn" data-section="progress">−</button></div>
+    <div class="section-title"><h2>支出ペース・使いすぎ予報</h2><button class="minus-btn" data-section="progress">−</button></div>
     <div class="progress-wrap">
-      <div class="progress-label"><span>予算</span><strong id="budgetProgressText">¥0 / ¥0</strong></div>
+      <div class="progress-label"><span>今月の支出</span><strong id="budgetProgressText">¥0 / ¥0</strong></div>
+      <div class="progress-meter-caption"><span id="budgetProgressPercent">予算0%</span></div>
       <div class="progress"><div id="budgetProgressBar"></div></div>
-      <div class="progress-sub"><span id="budgetProgressPercent">0%</span><span id="budgetStatus">データを入力すると表示されます</span></div>
+      <div class="progress-safe"><span>ここまで使っても大丈夫</span><strong id="safeSpendAmount">¥0</strong></div>
+      <div class="progress-sub"><span id="budgetStatus">データを入力すると表示されます</span></div>
     </div>
-  </section>
-  <section class="card forecast-section" data-section-content="forecast">
-    <div class="section-title"><h2>使いすぎ予報</h2><button class="minus-btn" data-section="forecast">−</button></div>
     <div class="forecast-box">
       <div class="forecast-label">このペースで使った場合の月末予想</div>
       <strong id="forecastAmount">¥0</strong>
