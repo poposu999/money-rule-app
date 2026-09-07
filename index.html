@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>家計簿</title>
-<link href="style.css?v=42" rel="stylesheet"/>
+<link href="style.css?v=44" rel="stylesheet"/>
 </head>
 <body>
 <main class="container">
@@ -36,11 +36,11 @@
 <div class="forecast-status" id="forecastStatus">データを入力すると表示されます</div>
 </div>
 </section><section class="card entry-section" data-section-content="entry-form">
-<div class="section-title"><h2>支出 / 固定費 / 予定支出 を入力</h2><button class="minus-btn" data-section="entry-form">−</button></div>
+<div class="section-title"><h2>支出 / 支出予定 / 固定費 を入力</h2><button class="minus-btn" data-section="entry-form">−</button></div>
 <div aria-label="支出入力の種類" class="entry-tabs" role="tablist">
 <button class="entry-tab active" data-entry-tab="expense" type="button">支出</button>
+<button class="entry-tab" data-entry-tab="planned" type="button">支出予定</button>
 <button class="entry-tab" data-entry-tab="fixed" type="button">固定費</button>
-<button class="entry-tab" data-entry-tab="planned" type="button">予定支出</button>
 </div>
 <div class="entry-panel active" data-entry-panel="expense">
 <div class="grid">
@@ -80,7 +80,7 @@
           <input id="fixedAmount" inputmode="numeric" min="0" placeholder="10000" step="100" type="number"/>
 </label>
 <label>カテゴリ
-          <div class="category-quick fixed-category-quick" id="fixedCategoryQuick"><button data-category="住居費" type="button">🏠 住居費</button><button data-category="通信費" type="button">📱 通信費</button><button data-category="水光熱費" type="button">💡 水光熱費</button><button data-category="保険" type="button">🛡️ 保険</button><button data-category="サブスク" type="button">📺 サブスク</button><button data-category="交通費" type="button">🚃 交通費</button><button data-category="その他" type="button">その他 その他</button></div><select class="category-select" id="fixedCategory">
+          <div class="category-quick fixed-category-quick" id="fixedCategoryQuick"><button data-category="住居費" type="button">🏠 住居費</button><button data-category="通信費" type="button">📱 通信費</button><button data-category="水光熱費" type="button">💡 水光熱費</button><button data-category="保険" type="button">🛡️ 保険</button><button data-category="サブスク" type="button">📺 サブスク</button><button data-category="交通費" type="button">🚃 交通費</button><button data-category="その他" type="button">その他</button></div><select class="category-select" id="fixedCategory">
 <option>住居費</option><option>通信費</option><option>水光熱費</option><option>保険</option><option>サブスク</option><option>交通費</option><option>その他</option>
 </select>
 </label>
@@ -241,14 +241,14 @@
     <label>メモ<input id="editMemo" type="text"></label>
     <label>日付<input id="editDate" type="date"></label>
     <div class="modal-reorder"><span>同じ日付内の並び順</span><div><button id="moveEditUp" type="button" class="secondary-btn">▲ 上へ</button><button id="moveEditDown" type="button" class="secondary-btn">▼ 下へ</button></div></div>
-    <div class="modal-actions"><button id="cancelEdit" class="secondary-btn">キャンセル</button><button id="saveEdit">変更を保存</button></div>
+    <div class="modal-actions"><button id="rollbackToPlanned" type="button" class="secondary-btn">今月の予定支出に戻す</button><button id="cancelEdit" class="secondary-btn">キャンセル</button><button id="saveEdit">変更を保存</button></div>
   </div>
 </div>
 <div id="inputValidation" class="validation-warning hidden"></div>
 <footer class="app-footer">
-<h1>家計簿 <span class="app-version">ver.43</span></h1>
+<h1>家計簿 <span class="app-version">ver.44</span></h1>
 <p>収入・固定費・貯金を先に整理して、今月使える金額を自動計算。</p>
 </footer></main>
-<script src="app.js?v=42"></script>
+<script src="app.js?v=44"></script>
 </body>
 </html>
