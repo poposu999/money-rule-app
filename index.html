@@ -90,7 +90,7 @@
     <div class="stat" id="extraIncomeStat"><span>毎月の最低限の手取りからの超過分</span><strong id="extraIncome">¥0</strong></div>
     <div class="stat"><span>今月の貯金予定</span><strong id="plannedSavings">¥0</strong></div>
     <div id="incomeRestore" class="income-restore hidden"><button type="button" class="secondary-btn">＋ 前月の収入を表示</button></div>
-  <p class="supplementary-note">入力チェック：収入・貯金目標・最低限の手取りの金額関係も確認してください。</p>
+  <p class="supplementary-note">入力チェック：<span id="inputValidation">確認中…</span></p>
 </section>
   <section class="card" data-section-content="progress">
     <div class="section-title"><h2>今月の支出ペース</h2><button class="minus-btn" data-section="progress">−</button></div>
@@ -203,6 +203,7 @@
       </label>
       <label>メモ<input id="editMemo" type="text"></label>
       <label>日付<input id="editDate" type="date"></label>
+      <div class="modal-reorder"><span>同じ日付内の並び順</span><div><button id="moveEditUp" type="button" class="secondary-btn">▲ 上へ</button><button id="moveEditDown" type="button" class="secondary-btn">▼ 下へ</button></div></div>
       <div class="modal-actions"><button id="cancelEdit" class="secondary-btn">キャンセル</button><button id="saveEdit">変更を保存</button></div>
     </div>
   </div>
