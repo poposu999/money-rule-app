@@ -174,3 +174,9 @@ button{margin-top:14px;border:0;border-radius:9px;padding:11px 16px;font-size:15
   .fixed-expense-table .action-col{min-width:0}
   .fixed-expense-table th,.fixed-expense-table td{font-size:11px}
 }
+
+/* ver.32 */
+.fixed-expense-table .planned-confirm-btn{font-size:12px;padding:5px 7px;min-height:30px;border:1px solid #999;border-radius:6px;background:#f3f4f6;color:#222;cursor:pointer;white-space:nowrap}
+.fixed-expense-table .planned-confirm-btn:hover{background:#e8eaed}
+.forecast-box{background:#f8f8f8;border-radius:12px;padding:15px}.forecast-label{color:#6b7280;font-size:13px}.forecast-box strong{display:block;font-size:24px;margin-top:5px}.forecast-status{margin-top:9px;font-size:13px;font-weight:700}.forecast-status.good{color:#237a35}.forecast-status.danger{color:#b42318}.forecast-status.neutral{color:#6b7280}
+@media(max-width:600px){.fixed-expense-table .planned-confirm-btn{font-size:11px;padding:5px 5px;min-height:30px}}
