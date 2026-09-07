@@ -183,3 +183,9 @@ button{margin-top:14px;border:0;border-radius:9px;padding:11px 16px;font-size:15
 
 .entry-panel{display:none}.entry-panel.active{display:block}.entry-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 16px;padding:4px;background:#f0f1f3;border-radius:11px}.entry-tab{margin:0;padding:10px 8px;background:transparent;color:#666;border-radius:8px}.entry-tab.active{background:#fff;color:#202124;box-shadow:0 1px 4px rgba(0,0,0,.12)}.income-restore{text-align:center}.income-restore button{margin-left:auto;margin-right:auto}
 @media(max-width:600px){.entry-tab{font-size:14px}}
+/* ver.37 */
+.app-footer{text-align:center;margin-top:22px;padding:18px 0 4px;color:#6b7280}
+.app-footer h1{font-size:24px;color:#202124;margin-bottom:5px}
+.app-footer p{margin:0;font-size:13px}
+.fixed-category-quick,.planned-category-quick{grid-template-columns:repeat(3,1fr)}
+@media(max-width:600px){.fixed-category-quick,.planned-category-quick{grid-template-columns:repeat(2,1fr)}}
