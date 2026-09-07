@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>家計簿</title>
-<link href="style.css?v=41" rel="stylesheet"/>
+<link href="style.css?v=42" rel="stylesheet"/>
 </head>
 <body>
 <main class="container">
@@ -197,10 +197,57 @@
 <input accept="application/json,.json" hidden="" id="importBackup" type="file"/>
 </div>
 <p class="entry-hint" id="backupStatus"></p>
-</section><footer class="app-footer">
-<h1>家計簿 <span class="app-version">ver.41</span></h1>
+</section>
+<div id="fixedEditModal" class="modal hidden">
+  <div class="modal-box">
+    <div class="modal-header"><h2>固定費を編集</h2><button id="closeFixedModal" class="close-btn">×</button></div>
+    <label>金額<input id="fixedEditAmount" type="number" min="0" step="100" inputmode="numeric"></label>
+    <label>カテゴリ
+      <select id="fixedEditCategory">
+        <option>住居費</option><option>通信費</option><option>水光熱費</option><option>保険</option><option>サブスク</option><option>交通費</option><option>その他</option>
+      </select>
+    </label>
+    <label>メモ<input id="fixedEditMemo" type="text"></label>
+    <label>毎月の支払日<input id="fixedEditDay" type="number" min="1" max="31" step="1" inputmode="numeric"></label>
+    <div class="modal-actions"><button id="cancelFixedEdit" class="secondary-btn">キャンセル</button><button id="saveFixedEdit">変更を保存</button></div>
+  </div>
+</div>
+<div id="plannedEditModal" class="modal hidden">
+  <div class="modal-box">
+    <div class="modal-header"><h2>予定支出を編集</h2><button id="closePlannedModal" class="close-btn">×</button></div>
+    <label>金額<input id="plannedEditAmount" type="number" min="0" step="100" inputmode="numeric"></label>
+    <label>カテゴリ
+      <select id="plannedEditCategory">
+        <option>食費</option><option>日用品</option><option>水光熱費</option><option>交通費</option><option>美容</option><option>医療関係</option>
+        <option>娯楽</option><option>外食</option><option>その他</option>
+      </select>
+    </label>
+    <label>メモ<input id="plannedEditMemo" type="text"></label>
+    <label>予定日<input id="plannedEditDate" type="date"></label>
+    <div class="modal-actions"><button id="cancelPlannedEdit" class="secondary-btn">キャンセル</button><button id="savePlannedEdit">変更を保存</button></div>
+  </div>
+</div>
+<div id="editModal" class="modal hidden">
+  <div class="modal-box">
+    <div class="modal-header"><h2>支出を編集</h2><button id="closeModal" class="close-btn">×</button></div>
+    <label>金額<input id="editAmount" type="number" min="0" step="100" inputmode="numeric"></label>
+    <label>カテゴリ
+      <select id="editCategory">
+        <option>食費</option><option>日用品</option><option>水光熱費</option><option>交通費</option><option>美容</option><option>医療関係</option>
+        <option>娯楽</option><option>外食</option><option>その他</option>
+      </select>
+    </label>
+    <label>メモ<input id="editMemo" type="text"></label>
+    <label>日付<input id="editDate" type="date"></label>
+    <div class="modal-reorder"><span>同じ日付内の並び順</span><div><button id="moveEditUp" type="button" class="secondary-btn">▲ 上へ</button><button id="moveEditDown" type="button" class="secondary-btn">▼ 下へ</button></div></div>
+    <div class="modal-actions"><button id="cancelEdit" class="secondary-btn">キャンセル</button><button id="saveEdit">変更を保存</button></div>
+  </div>
+</div>
+<div id="inputValidation" class="validation-warning hidden"></div>
+<footer class="app-footer">
+<h1>家計簿 <span class="app-version">ver.42</span></h1>
 <p>収入・固定費・貯金を先に整理して、今月使える金額を自動計算。</p>
 </footer></main>
-<script src="app.js?v=41"></script>
+<script src="app.js?v=42"></script>
 </body>
 </html>
