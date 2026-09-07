@@ -45,6 +45,29 @@
     <button id="addExpense">支出を追加</button>
     <p class="entry-hint">金額 → カテゴリ → 記録、の3ステップで入力できます。</p>
   </section>
+  <section class="card fixed-expense-section" data-section-content="fixed-expenses">
+    <div class="section-title"><h2>固定費を登録</h2><button class="minus-btn" data-section="fixed-expenses">−</button></div>
+    <p class="muted">家賃・通信費など、毎月発生する固定費を登録しておくと、今月の予定支出に自動で入ります。支払ったら「支出に確定」で実績へ移せます。</p>
+    <div class="grid">
+      <label>固定費名
+        <input id="fixedExpenseName" type="text" placeholder="家賃">
+      </label>
+      <label>金額
+        <input id="fixedExpenseAmount" type="number" min="0" step="100" inputmode="numeric" placeholder="70000">
+      </label>
+      <label>支払日
+        <input id="fixedExpenseDay" type="number" min="1" max="31" step="1" inputmode="numeric" placeholder="27">
+      </label>
+      <label>カテゴリ
+        <select id="fixedExpenseCategory" class="category-select">
+          <option>食費</option><option>日用品</option><option>水光熱費</option><option>交通費</option><option>美容</option><option>医療関係</option>
+          <option>娯楽</option><option>外食</option><option selected>その他</option>
+        </select>
+      </label>
+    </div>
+    <button id="addFixedExpense" type="button">固定費を登録</button>
+    <div id="fixedExpenseList" class="fixed-expense-list"></div>
+  </section>
   <section class="card planned-section" data-section-content="planned-list">
     <div class="section-title expense-section-title"><h2>今月の予定支出</h2><div class="section-title-actions"><strong id="plannedTotal" class="expense-total">合計：¥0</strong><button class="minus-btn" data-section="planned-list">−</button></div></div>
     <div class="grid">
@@ -90,7 +113,7 @@
     <div class="stat" id="extraIncomeStat"><span>毎月の最低限の手取りからの超過分</span><strong id="extraIncome">¥0</strong></div>
     <div class="stat"><span>今月の貯金予定</span><strong id="plannedSavings">¥0</strong></div>
     <div id="incomeRestore" class="income-restore hidden"><button type="button" class="secondary-btn">＋ 前月の収入を表示</button></div>
-  <p class="supplementary-note">入力チェック：<span id="inputValidation">確認中…</span></p>
+  <p class="supplementary-note"><span id="inputValidation" class="hidden"></span></p>
 </section>
   <section class="card" data-section-content="progress">
     <div class="section-title"><h2>今月の支出ペース</h2><button class="minus-btn" data-section="progress">−</button></div>
@@ -99,10 +122,6 @@
       <div class="progress"><div id="budgetProgressBar"></div></div>
       <div class="progress-sub"><span id="budgetProgressPercent">0%</span><span id="budgetStatus">データを入力すると表示されます</span></div>
     </div>
-  </section>
-  <section class="card forecast-card" data-section-content="forecast">
-    <div class="section-title"><h2>使いすぎ予測</h2><button class="minus-btn" data-section="forecast">−</button></div>
-    <div class="forecast-main"><strong id="forecastMessage">データを入力してください</strong><span id="forecastDetail"></span><span id="forecastAdvice"></span></div>
   </section>
   <section class="charts" data-section-content="charts">
     <div class="section-title full"><h2>グラフ</h2><button class="minus-btn" data-section="charts">−</button></div>
