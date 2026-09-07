@@ -196,6 +196,43 @@ function openEdit(id){const e=state.expenses.find(x=>String(x.id)===String(id));
 function closeEdit(){$("editModal").classList.add("hidden");}
 $("closeModal").onclick=closeEdit;$("cancelEdit").onclick=closeEdit;$("editModal").onclick=e=>{if(e.target===$("editModal"))closeEdit()};
 $("saveEdit").onclick=()=>{const id=$("editModal").dataset.id,e=state.expenses.find(x=>String(x.id)===String(id)),amount=Math.max(0,Number($("editAmount").value)||0);if(!e||!amount){alert("金額を入力してください");return}e.amount=amount;e.category=$("editCategory").value;e.memo=$("editMemo").value.trim();e.date=$("editDate").value||today;save();closeEdit();calc();renderExpenses();};
-function moveExpense(id,direction){const current=state.expenses.findIndex(x=>String(x.id)===String(id));if(current<0)return;const date=String(state.expenses[current].date||"");const sameDate=state.expenses.map((x,i)=>({x,i})).filter(o=>String(o.x.date||"")===date).map(o=>o.i);const pos=sameDate.indexOf(current);if(pos<0)return;const targetPos=direction==="up"?pos+1:pos-1;if(targetPos<0||targetPos>=sameDate.length)return;const target=sameDate[targetPos];const tmp=state.expenses[current];state.expenses[current]=state.expenses[target];state.expenses[target]=tmp;save();renderExpenses();calc();}
+function moveExpense(id,direction){const current=state.expenses.findIndex(x=>String(x.id)===String(id));if(current<0)return;const date=String(state.expenses[current].date||"");const sameDate=state.expenses.map((x,i)=>({x,i})).filter(o=>String(o.x.date||"")===date).map(o=>o.i);const pos=sameDate.indexOf(current);if(pos<0)return;const targetPos=direction==="up"?pos-1:pos+1;if(targetPos<0||targetPos>=sameDate.length)return;const target=sameDate[targetPos];const tmp=state.expenses[current];state.expenses[current]=state.expenses[target];state.expenses[target]=tmp;save();renderExpenses();calc();}
 $("expenseList").addEventListener("click",event=>{const move=event.target.closest("[data-move]"),edit=event.target.closest("[data-edit]"),del=event.target.closest("[data-delete]");if(move){event.preventDefault();moveExpense(move.dataset.id,move.dataset.move);return}if(edit){event.preventDefault();openEdit(edit.dataset.edit);return}if(del){event.preventDefault();const id=del.dataset.delete,idx=state.expenses.findIndex(x=>String(x.id)===String(id));if(idx>=0){state.expenses.splice(idx,1);save();calc();renderExpenses();}}});
 applySectionPrefs();applyStatPrefs();
+
+function calculateAmountExpression(value){
+  const s = String(value ?? "").trim();
+  if (!s) return "";
+  if (/^\d+(?:\.\d+)?$/.test(s)) return String(Number(s));
+  if (!/^[0-9+\-*/().\s]+$/.test(s)) return null;
+  try {
+    const result = Function('"use strict"; return (' + s + ')')();
+    if (!Number.isFinite(result) || result < 0) return null;
+    return String(Math.round(result * 100) / 100);
+  } catch(e) {
+    return null;
+  }
+}
+function wireAmountCalculator(){
+  document.querySelectorAll('input[type="number"]').forEach(input=>{
+    if (input.dataset.calcBound) return;
+    input.dataset.calcBound = "1";
+    input.type = "text";
+    input.inputMode = "decimal";
+    input.addEventListener("blur", ()=>{
+      const result = calculateAmountExpression(input.value);
+      if (result !== null && result !== "") input.value = result;
+    });
+  });
+}
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", wireAmountCalculator);
+} else {
+  wireAmountCalculator();
+}
+
+function formatExpenseDate(date){
+  const s = String(date || "");
+  const m = s.match(/^\d{4}[-\/](\d{1,2})[-\/](\d{1,2})$/);
+  return m ? `${String(m[1]).padStart(2,"0")}/${String(m[2]).padStart(2,"0")}` : s;
+}

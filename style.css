@@ -140,3 +140,15 @@ button{margin-top:14px;border:0;border-radius:9px;padding:11px 16px;font-size:15
 .backup-actions button{margin:0}
 #backupStatus{margin-top:10px}
 @media(max-width:600px){.backup-actions{display:grid;grid-template-columns:1fr}.backup-actions button{width:100%}}
+
+/* ver.30 mobile date control overflow fix */
+@media (max-width: 600px){
+  input[type="date"]{
+    max-width:100%;
+    min-width:0;
+    box-sizing:border-box;
+  }
+  input, select, button{
+    box-sizing:border-box;
+  }
+}
