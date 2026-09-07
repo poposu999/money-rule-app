@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>家計簿</title>
-<link rel="stylesheet" href="style.css?v=30">
+<link rel="stylesheet" href="style.css?v=31">
 </head>
 <body>
 <main class="container">
   <header>
-    <h1>家計簿 <span class="app-version">ver.30</span></h1>
+    <h1>家計簿 <span class="app-version">ver.31</span></h1>
     <p>収入・固定費・貯金を先に整理して、今月使える金額を自動計算。</p>
   </header>
   <section class="card quick-entry" data-section-content="quick-entry">
@@ -45,28 +45,27 @@
     <button id="addExpense">支出を追加</button>
     <p class="entry-hint">金額 → カテゴリ → 記録、の3ステップで入力できます。</p>
   </section>
-  <section class="card fixed-expense-section" data-section-content="fixed-expenses">
-    <div class="section-title"><h2>固定費を登録</h2><button class="minus-btn" data-section="fixed-expenses">−</button></div>
-    <p class="muted">家賃・通信費など、毎月発生する固定費を登録しておくと、今月の予定支出に自動で入ります。支払ったら「支出に確定」で実績へ移せます。</p>
+  <section class="card fixed-section" data-section-content="fixed-list">
+    <div class="section-title expense-section-title"><h2>固定費を登録</h2><div class="section-title-actions"><strong id="fixedTotal" class="expense-total">合計：¥0</strong><button class="minus-btn" data-section="fixed-list">−</button></div></div>
     <div class="grid">
-      <label>固定費名
-        <input id="fixedExpenseName" type="text" placeholder="家賃">
-      </label>
       <label>金額
-        <input id="fixedExpenseAmount" type="number" min="0" step="100" inputmode="numeric" placeholder="70000">
-      </label>
-      <label>支払日
-        <input id="fixedExpenseDay" type="number" min="1" max="31" step="1" inputmode="numeric" placeholder="27">
+        <input id="fixedAmount" type="number" min="0" step="100" inputmode="numeric" placeholder="10000">
       </label>
       <label>カテゴリ
-        <select id="fixedExpenseCategory" class="category-select">
-          <option>食費</option><option>日用品</option><option>水光熱費</option><option>交通費</option><option>美容</option><option>医療関係</option>
-          <option>娯楽</option><option>外食</option><option selected>その他</option>
+        <select id="fixedCategory" class="category-select">
+          <option>住居費</option><option>通信費</option><option>水光熱費</option><option>保険</option><option>サブスク</option><option>交通費</option><option>その他</option>
         </select>
       </label>
+      <label>メモ
+        <input id="fixedMemo" type="text" placeholder="家賃など">
+      </label>
+      <label>毎月の支払日
+        <input id="fixedDay" type="number" min="1" max="31" step="1" inputmode="numeric" placeholder="27">
+      </label>
     </div>
-    <button id="addFixedExpense" type="button">固定費を登録</button>
-    <div id="fixedExpenseList" class="fixed-expense-list"></div>
+    <button id="addFixedExpense">固定費を追加</button>
+    <p class="entry-hint">ここで登録した固定費は「今月の予定支出」には入りません。支払ったら「支出に確定」で今月の支出として記録します。</p>
+    <div id="fixedList" class="expense-table-wrap"></div>
   </section>
   <section class="card planned-section" data-section-content="planned-list">
     <div class="section-title expense-section-title"><h2>今月の予定支出</h2><div class="section-title-actions"><strong id="plannedTotal" class="expense-total">合計：¥0</strong><button class="minus-btn" data-section="planned-list">−</button></div></div>
@@ -95,13 +94,6 @@
     <div class="section-title expense-section-title"><h2>今月の支出</h2><div class="section-title-actions"><strong id="expenseTotal" class="expense-total">合計：¥0</strong><button class="minus-btn" data-section="expense-list">−</button></div></div>
     <div id="expenseList" class="expense-table-wrap"></div>
   </section>
-  <section class="card budget-breakdown" data-section-content="breakdown">
-    <div class="section-title"><h2>お金の内訳</h2><button class="minus-btn" data-section="breakdown">−</button></div>
-    <div class="breakdown-row"><span>固定費（先に確保）</span><strong id="fixedCostsView">¥0</strong></div>
-    <div class="breakdown-row"><span>貯金（先に確保）</span><strong id="savingsReserveView">¥0</strong></div>
-    <div class="breakdown-row highlight-row"><span>変動費として使える額</span><strong id="variableBudgetView">¥0</strong></div>
-    <p class="muted">固定費は家計ルールで先に確保するため、支出記録には含めず、日々の支出は変動費として管理します。</p>
-  </section>
   <section class="stats" data-section-content="stats">
     <div class="section-title full"><h2>今月の状況</h2><button class="minus-btn" data-section="stats">−</button></div>
     <div class="stat"><span>今月使った金額</span><strong id="monthSpent">¥0</strong></div>
@@ -113,7 +105,6 @@
     <div class="stat" id="extraIncomeStat"><span>毎月の最低限の手取りからの超過分</span><strong id="extraIncome">¥0</strong></div>
     <div class="stat"><span>今月の貯金予定</span><strong id="plannedSavings">¥0</strong></div>
     <div id="incomeRestore" class="income-restore hidden"><button type="button" class="secondary-btn">＋ 前月の収入を表示</button></div>
-  <p class="supplementary-note"><span id="inputValidation" class="hidden"></span></p>
 </section>
   <section class="card" data-section-content="progress">
     <div class="section-title"><h2>今月の支出ペース</h2><button class="minus-btn" data-section="progress">−</button></div>
@@ -169,9 +160,6 @@
       <label>毎月の最低限の手取り
         <input id="minimumTakeHome" type="number" min="0" step="1000" inputmode="numeric" placeholder="250000">
       </label>
-      <label>毎月の固定費
-        <input id="fixedCosts" type="number" min="0" step="1000" inputmode="numeric" placeholder="150000">
-      </label>
       <label>毎月の貯金目標
         <input id="savingsTarget" type="number" min="0" step="1000" inputmode="numeric" placeholder="50000">
       </label>
@@ -195,6 +183,20 @@
     </div>
     <p id="backupStatus" class="entry-hint"></p>
   </section>
+  <div id="fixedEditModal" class="modal hidden">
+    <div class="modal-box">
+      <div class="modal-header"><h2>固定費を編集</h2><button id="closeFixedModal" class="close-btn">×</button></div>
+      <label>金額<input id="fixedEditAmount" type="number" min="0" step="100" inputmode="numeric"></label>
+      <label>カテゴリ
+        <select id="fixedEditCategory">
+          <option>住居費</option><option>通信費</option><option>水光熱費</option><option>保険</option><option>サブスク</option><option>交通費</option><option>その他</option>
+        </select>
+      </label>
+      <label>メモ<input id="fixedEditMemo" type="text"></label>
+      <label>毎月の支払日<input id="fixedEditDay" type="number" min="1" max="31" step="1" inputmode="numeric"></label>
+      <div class="modal-actions"><button id="cancelFixedEdit" class="secondary-btn">キャンセル</button><button id="saveFixedEdit">変更を保存</button></div>
+    </div>
+  </div>
   <div id="plannedEditModal" class="modal hidden">
     <div class="modal-box">
       <div class="modal-header"><h2>予定支出を編集</h2><button id="closePlannedModal" class="close-btn">×</button></div>
@@ -227,6 +229,6 @@
     </div>
   </div>
 </main>
-<script src="app.js?v=30"></script>
+<script src="app.js?v=31"></script>
 </body>
 </html>
