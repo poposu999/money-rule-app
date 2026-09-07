@@ -4,23 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>家計簿</title>
-<link rel="stylesheet" href="style.css?v=34">
+<link rel="stylesheet" href="style.css?v=36">
 </head>
 <body>
 <main class="container">
   <header>
-    <h1>家計簿 <span class="app-version">ver.34</span></h1>
+    <h1>家計簿 <span class="app-version">ver.36</span></h1>
     <p>収入・固定費・貯金を先に整理して、今月使える金額を自動計算。</p>
   </header>
   <section class="card entry-section" data-section-content="entry-form">
-    <div class="section-title"><h2>支出を入力</h2><button class="minus-btn" data-section="entry-form">−</button></div>
-    <label class="entry-type-select">登録するもの
-      <select id="entryType">
-        <option value="expense">支出</option>
-        <option value="fixed">固定費</option>
-        <option value="planned">予定支出</option>
-      </select>
-    </label>
+    <div class="section-title"><h2>支出 / 固定費 / 予定支出 を入力</h2><button class="minus-btn" data-section="entry-form">−</button></div>
+    <div class="entry-tabs" role="tablist" aria-label="支出入力の種類">
+      <button type="button" class="entry-tab active" data-entry-tab="expense">支出</button>
+      <button type="button" class="entry-tab" data-entry-tab="fixed">固定費</button>
+      <button type="button" class="entry-tab" data-entry-tab="planned">予定支出</button>
+    </div>
 
     <div class="entry-panel active" data-entry-panel="expense">
       <div class="grid">
@@ -51,7 +49,7 @@
           <input id="expenseDate" type="date">
         </label>
       </div>
-      <button id="addExpense">支出を追加</button>
+      <button id="addExpense">登録する</button>
       <p class="entry-hint">今月すでに支払った支出を記録します。</p>
     </div>
 
@@ -72,7 +70,7 @@
           <input id="fixedDay" type="number" min="1" max="31" step="1" inputmode="numeric" placeholder="27">
         </label>
       </div>
-      <button id="addFixedExpense">固定費を追加</button>
+      <button id="addFixedExpense">登録する</button>
       <p class="entry-hint">毎月発生する固定費を登録します。支払ったら一覧から「支出に確定」で記録します。</p>
     </div>
 
@@ -94,7 +92,7 @@
           <input id="plannedDate" type="date">
         </label>
       </div>
-      <button id="addPlannedExpense">予定支出を追加</button>
+      <button id="addPlannedExpense">登録する</button>
       <p class="entry-hint">これから支払う予定を登録すると、残り予算に自動で反映されます。</p>
     </div>
   </section>
@@ -120,7 +118,7 @@
     <div class="stat"><span>今月使える予算</span><strong id="spendingBudget">¥0</strong></div>
     <div class="stat" id="incomeStat"><span>前月の収入</span><strong id="incomeView">¥0</strong></div>
     <div class="stat" id="extraIncomeStat"><span>毎月の最低限の手取りからの超過分</span><strong id="extraIncome">¥0</strong></div>
-    <div id="incomeRestore" class="income-restore full"><button type="button" class="secondary-btn">前月の収入を非表示</button></div>
+    <div id="incomeRestore" class="income-restore"><button type="button" class="secondary-btn">前月の収入を非表示</button></div>
 </section>
   <section class="card" data-section-content="progress">
     <div class="section-title"><h2>支出ペース・使いすぎ予報</h2><button class="minus-btn" data-section="progress">−</button></div>

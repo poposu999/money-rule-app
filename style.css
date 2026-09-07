@@ -181,5 +181,5 @@ button{margin-top:14px;border:0;border-radius:9px;padding:11px 16px;font-size:15
 .forecast-box{background:#f8f8f8;border-radius:12px;padding:15px}.forecast-label{color:#6b7280;font-size:13px}.forecast-box strong{display:block;font-size:24px;margin-top:5px}.forecast-status{margin-top:9px;font-size:13px;font-weight:700}.forecast-status.good{color:#237a35}.forecast-status.danger{color:#b42318}.forecast-status.neutral{color:#6b7280}
 @media(max-width:600px){.fixed-expense-table .planned-confirm-btn{font-size:11px;padding:5px 5px;min-height:30px}}
 
-/* ver.35: 入力フォームの切り替えをセレクト式に統一、前月収入ボタンをPCでも中央配置 */
-.entry-type-select{display:block;max-width:320px;margin:0 0 14px}.entry-type-select select{margin-top:6px}.income-restore.full{grid-column:1/-1;width:100%;}
+.entry-panel{display:none}.entry-panel.active{display:block}.entry-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 16px;padding:4px;background:#f0f1f3;border-radius:11px}.entry-tab{margin:0;padding:10px 8px;background:transparent;color:#666;border-radius:8px}.entry-tab.active{background:#fff;color:#202124;box-shadow:0 1px 4px rgba(0,0,0,.12)}.income-restore{text-align:center}.income-restore button{margin-left:auto;margin-right:auto}
+@media(max-width:600px){.entry-tab{font-size:14px}}
