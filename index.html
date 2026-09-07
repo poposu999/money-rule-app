@@ -4,90 +4,104 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>家計簿</title>
-<link rel="stylesheet" href="style.css?v=32">
+<link rel="stylesheet" href="style.css?v=34">
 </head>
 <body>
 <main class="container">
   <header>
-    <h1>家計簿 <span class="app-version">ver.32</span></h1>
+    <h1>家計簿 <span class="app-version">ver.34</span></h1>
     <p>収入・固定費・貯金を先に整理して、今月使える金額を自動計算。</p>
   </header>
-  <section class="card quick-entry" data-section-content="quick-entry">
-    <div class="section-title"><h2>支出を記録</h2><button class="minus-btn" data-section="quick-entry">−</button></div>
-    <div class="grid">
-      <label>金額
-        <input id="expenseAmount" type="number" min="0" step="100" inputmode="numeric" placeholder="1500">
-      </label>
-      <label>カテゴリ
-        <div class="category-quick" id="categoryQuick">
-          <button type="button" data-category="食費">🍚 食費</button>
-          <button type="button" data-category="日用品">🛒 日用品</button>
-          <button type="button" data-category="交通費">🚃 交通費</button>
-          <button type="button" data-category="水光熱費">💡 水光熱費</button>
-          <button type="button" data-category="美容">💇 美容</button>
-          <button type="button" data-category="医療関係">🏥 医療関係</button>
-          <button type="button" data-category="娯楽">🎮 娯楽</button>
-          <button type="button" data-category="外食">🍴 外食</button>
-          <button type="button" data-category="その他">その他</button>
-        </div>
-        <select id="expenseCategory" class="category-select">
-          <option>食費</option><option>日用品</option><option>水光熱費</option><option>交通費</option><option>美容</option><option>医療関係</option>
-          <option>娯楽</option><option>外食</option><option>その他</option>
-        </select>
-      </label>
-      <label>メモ
-        <input id="expenseMemo" type="text" placeholder="昼ごはん">
-      </label>
-      <label>日付
-        <input id="expenseDate" type="date">
-      </label>
+  <section class="card entry-section" data-section-content="entry-form">
+    <div class="section-title"><h2>支出を入力</h2><button class="minus-btn" data-section="entry-form">−</button></div>
+    <div class="entry-tabs" role="tablist" aria-label="支出入力の種類">
+      <button type="button" class="entry-tab active" data-entry-tab="expense">支出</button>
+      <button type="button" class="entry-tab" data-entry-tab="fixed">固定費</button>
+      <button type="button" class="entry-tab" data-entry-tab="planned">予定支出</button>
     </div>
-    <button id="addExpense">支出を追加</button>
-    <p class="entry-hint">金額 → カテゴリ → 記録、の3ステップで入力できます。</p>
+
+    <div class="entry-panel active" data-entry-panel="expense">
+      <div class="grid">
+        <label>金額
+          <input id="expenseAmount" type="number" min="0" step="100" inputmode="numeric" placeholder="1500">
+        </label>
+        <label>カテゴリ
+          <div class="category-quick" id="categoryQuick">
+            <button type="button" data-category="食費">🍚 食費</button>
+            <button type="button" data-category="日用品">🛒 日用品</button>
+            <button type="button" data-category="交通費">🚃 交通費</button>
+            <button type="button" data-category="水光熱費">💡 水光熱費</button>
+            <button type="button" data-category="美容">💇 美容</button>
+            <button type="button" data-category="医療関係">🏥 医療関係</button>
+            <button type="button" data-category="娯楽">🎮 娯楽</button>
+            <button type="button" data-category="外食">🍴 外食</button>
+            <button type="button" data-category="その他">その他</button>
+          </div>
+          <select id="expenseCategory" class="category-select">
+            <option>食費</option><option>日用品</option><option>水光熱費</option><option>交通費</option><option>美容</option><option>医療関係</option>
+            <option>娯楽</option><option>外食</option><option>その他</option>
+          </select>
+        </label>
+        <label>メモ
+          <input id="expenseMemo" type="text" placeholder="昼ごはん">
+        </label>
+        <label>日付
+          <input id="expenseDate" type="date">
+        </label>
+      </div>
+      <button id="addExpense">支出を追加</button>
+      <p class="entry-hint">今月すでに支払った支出を記録します。</p>
+    </div>
+
+    <div class="entry-panel" data-entry-panel="fixed">
+      <div class="grid">
+        <label>金額
+          <input id="fixedAmount" type="number" min="0" step="100" inputmode="numeric" placeholder="10000">
+        </label>
+        <label>カテゴリ
+          <select id="fixedCategory" class="category-select">
+            <option>住居費</option><option>通信費</option><option>水光熱費</option><option>保険</option><option>サブスク</option><option>交通費</option><option>その他</option>
+          </select>
+        </label>
+        <label>メモ
+          <input id="fixedMemo" type="text" placeholder="家賃など">
+        </label>
+        <label>毎月の支払日
+          <input id="fixedDay" type="number" min="1" max="31" step="1" inputmode="numeric" placeholder="27">
+        </label>
+      </div>
+      <button id="addFixedExpense">固定費を追加</button>
+      <p class="entry-hint">毎月発生する固定費を登録します。支払ったら一覧から「支出に確定」で記録します。</p>
+    </div>
+
+    <div class="entry-panel" data-entry-panel="planned">
+      <div class="grid">
+        <label>金額
+          <input id="plannedAmount" type="number" min="0" step="100" inputmode="numeric" placeholder="5000">
+        </label>
+        <label>カテゴリ
+          <select id="plannedCategory" class="category-select">
+            <option>食費</option><option>日用品</option><option>水光熱費</option><option>交通費</option><option>美容</option><option>医療関係</option>
+            <option>娯楽</option><option>外食</option><option>その他</option>
+          </select>
+        </label>
+        <label>メモ
+          <input id="plannedMemo" type="text" placeholder="飲み会など">
+        </label>
+        <label>予定日
+          <input id="plannedDate" type="date">
+        </label>
+      </div>
+      <button id="addPlannedExpense">予定支出を追加</button>
+      <p class="entry-hint">これから支払う予定を登録すると、残り予算に自動で反映されます。</p>
+    </div>
   </section>
   <section class="card fixed-section" data-section-content="fixed-list">
-    <div class="section-title expense-section-title"><h2>固定費を登録</h2><div class="section-title-actions"><strong id="fixedTotal" class="expense-total">合計：¥0</strong><button class="minus-btn" data-section="fixed-list">−</button></div></div>
-    <div class="grid">
-      <label>金額
-        <input id="fixedAmount" type="number" min="0" step="100" inputmode="numeric" placeholder="10000">
-      </label>
-      <label>カテゴリ
-        <select id="fixedCategory" class="category-select">
-          <option>住居費</option><option>通信費</option><option>水光熱費</option><option>保険</option><option>サブスク</option><option>交通費</option><option>その他</option>
-        </select>
-      </label>
-      <label>メモ
-        <input id="fixedMemo" type="text" placeholder="家賃など">
-      </label>
-      <label>毎月の支払日
-        <input id="fixedDay" type="number" min="1" max="31" step="1" inputmode="numeric" placeholder="27">
-      </label>
-    </div>
-    <button id="addFixedExpense">固定費を追加</button>
-    <p class="entry-hint">ここで登録した固定費は「今月の予定支出」には入りません。支払ったら「支出に確定」で今月の支出として記録します。</p>
+    <div class="section-title expense-section-title"><h2>固定費一覧</h2><div class="section-title-actions"><strong id="fixedTotal" class="expense-total">合計：¥0</strong><button class="minus-btn" data-section="fixed-list">−</button></div></div>
     <div id="fixedList" class="expense-table-wrap"></div>
   </section>
   <section class="card planned-section" data-section-content="planned-list">
     <div class="section-title expense-section-title"><h2>今月の予定支出</h2><div class="section-title-actions"><strong id="plannedTotal" class="expense-total">合計：¥0</strong><button class="minus-btn" data-section="planned-list">−</button></div></div>
-    <div class="grid">
-      <label>金額
-        <input id="plannedAmount" type="number" min="0" step="100" inputmode="numeric" placeholder="5000">
-      </label>
-      <label>カテゴリ
-        <select id="plannedCategory" class="category-select">
-          <option>食費</option><option>日用品</option><option>水光熱費</option><option>交通費</option><option>美容</option><option>医療関係</option>
-          <option>娯楽</option><option>外食</option><option>その他</option>
-        </select>
-      </label>
-      <label>メモ
-        <input id="plannedMemo" type="text" placeholder="飲み会など">
-      </label>
-      <label>予定日
-        <input id="plannedDate" type="date">
-      </label>
-    </div>
-    <button id="addPlannedExpense">予定支出を追加</button>
-    <p class="entry-hint">先に予定を登録しておくと、残り予算に自動で反映されます。支払ったら「支出に確定」で実績へ移せます。</p>
     <div id="plannedList" class="expense-table-wrap"></div>
   </section>
 <section class="card" data-section-content="expense-list">
@@ -112,7 +126,6 @@
       <div class="progress-label"><span>今月の支出</span><strong id="budgetProgressText">¥0 / ¥0</strong></div>
       <div class="progress-meter-caption"><span id="budgetProgressPercent">予算0%</span></div>
       <div class="progress"><div id="budgetProgressBar"></div></div>
-      <div class="progress-safe"><span>ここまで使っても大丈夫</span><strong id="safeSpendAmount">¥0</strong></div>
       <div class="progress-sub"><span id="budgetStatus">データを入力すると表示されます</span></div>
     </div>
     <div class="forecast-box">
