@@ -14,11 +14,13 @@
   </header>
   <section class="card entry-section" data-section-content="entry-form">
     <div class="section-title"><h2>支出を入力</h2><button class="minus-btn" data-section="entry-form">−</button></div>
-    <div class="entry-tabs" role="tablist" aria-label="支出入力の種類">
-      <button type="button" class="entry-tab active" data-entry-tab="expense">支出</button>
-      <button type="button" class="entry-tab" data-entry-tab="fixed">固定費</button>
-      <button type="button" class="entry-tab" data-entry-tab="planned">予定支出</button>
-    </div>
+    <label class="entry-type-select">登録するもの
+      <select id="entryType">
+        <option value="expense">支出</option>
+        <option value="fixed">固定費</option>
+        <option value="planned">予定支出</option>
+      </select>
+    </label>
 
     <div class="entry-panel active" data-entry-panel="expense">
       <div class="grid">
@@ -118,7 +120,7 @@
     <div class="stat"><span>今月使える予算</span><strong id="spendingBudget">¥0</strong></div>
     <div class="stat" id="incomeStat"><span>前月の収入</span><strong id="incomeView">¥0</strong></div>
     <div class="stat" id="extraIncomeStat"><span>毎月の最低限の手取りからの超過分</span><strong id="extraIncome">¥0</strong></div>
-    <div id="incomeRestore" class="income-restore"><button type="button" class="secondary-btn">前月の収入を非表示</button></div>
+    <div id="incomeRestore" class="income-restore full"><button type="button" class="secondary-btn">前月の収入を非表示</button></div>
 </section>
   <section class="card" data-section-content="progress">
     <div class="section-title"><h2>支出ペース・使いすぎ予報</h2><button class="minus-btn" data-section="progress">−</button></div>
