@@ -1,5 +1,5 @@
 const KEY="moneyRuleAppV2";
-const VERSION=42;
+const VERSION=43;
 const CATEGORIES=["食費","日用品","水光熱費","交通費","美容","医療関係","娯楽","外食","その他"];
 const defaultState={settings:{minimumTakeHome:250000,fixedCosts:150000,savingsTarget:50000,extraAllowancePercent:50,extraSavingsPercent:50},income:0,bonus:0,expenses:[],plannedExpenses:[],fixedExpenses:[],memory:{expenseCategory:"食費",plannedCategory:"食費",plannedMemo:"",plannedDate:"",fixedCategory:"住居費",fixedMemo:"",fixedDay:""}};
 let state;
@@ -30,10 +30,11 @@ function getNumbers(){
 }
 function getDayInfo(){const d=new Date(),last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(),day=d.getDate();return {day,last,remainingDays:last-day+1};}
 function calc(){
-  const n=getNumbers(),d=getDayInfo(),daily=Math.max(0,n.remaining)/d.remainingDays;
+  const n=getNumbers(),d=getDayInfo(),daily=Math.max(0,n.remaining)/Math.max(1,d.remainingDays);
   const expectedPct=d.day/d.last*100,pacePct=n.spendingBudget>0?n.spent/n.spendingBudget*100:0,paceDelta=pacePct-expectedPct;
   $("incomeView").textContent=yen(n.totalIncome); $("extraIncome").textContent=yen(n.extra); $("plannedSavings").textContent=yen(n.plannedSavings); $("spendingBudget").textContent=yen(n.spendingBudget);
   $("monthSpent").textContent=yen(n.spent); $("remainingBudget").textContent=yen(n.remaining); $("remainingDaysLabel").textContent=`（残り${d.remainingDays}日）`; $("dailyBudget").textContent=yen(daily); $("plannedExpenseView").textContent=yen(n.plannedAmount);
+  $("paceRemainingBudget").textContent=yen(n.remaining); $("paceDailyBudget").textContent=yen(daily); $("paceRemainingDays").textContent=`（残り${d.remainingDays}日）`;
   renderBudgetProgress(n.spendingBudget,n.spent); renderValidation(n); renderForecast(n,d);
   renderFixedExpenses();
   renderCategoryChart(n.es); renderDailyChart(n.es); renderMonthlyChart(); renderSavingsChart();
