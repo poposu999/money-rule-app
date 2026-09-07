@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>家計簿</title>
-<link href="style.css?v=44" rel="stylesheet"/>
+<link href="style.css?v=45" rel="stylesheet"/>
 </head>
 <body>
 <main class="container">
@@ -45,7 +45,7 @@
 <div class="entry-panel active" data-entry-panel="expense">
 <div class="grid">
 <label>金額
-          <input id="expenseAmount" inputmode="numeric" min="0" placeholder="1500" step="100" type="number"/>
+          <input id="expenseAmount" inputmode="numeric" min="0" placeholder="例)1000" step="100" type="number"/>
 </label>
 <label>カテゴリ
           <div class="category-quick" id="categoryQuick">
@@ -65,10 +65,10 @@
 </select>
 </label>
 <label>メモ
-          <input id="expenseMemo" placeholder="昼ごはん" type="text"/>
+          <input id="expenseMemo" placeholder="例)昼ごはん" type="text"/>
 </label>
 <label>日付
-          <input id="expenseDate" type="date"/>
+          <input id="expenseDate" type="date" placeholder="例)2026/09/08"/>
 </label>
 </div>
 <button id="addExpense">登録する</button>
@@ -77,7 +77,7 @@
 <div class="entry-panel" data-entry-panel="fixed">
 <div class="grid">
 <label>金額
-          <input id="fixedAmount" inputmode="numeric" min="0" placeholder="10000" step="100" type="number"/>
+          <input id="fixedAmount" inputmode="numeric" min="0" placeholder="例)10000" step="100" type="number"/>
 </label>
 <label>カテゴリ
           <div class="category-quick fixed-category-quick" id="fixedCategoryQuick"><button data-category="住居費" type="button">🏠 住居費</button><button data-category="通信費" type="button">📱 通信費</button><button data-category="水光熱費" type="button">💡 水光熱費</button><button data-category="保険" type="button">🛡️ 保険</button><button data-category="サブスク" type="button">📺 サブスク</button><button data-category="交通費" type="button">🚃 交通費</button><button data-category="その他" type="button">その他</button></div><select class="category-select" id="fixedCategory">
@@ -85,10 +85,10 @@
 </select>
 </label>
 <label>メモ
-          <input id="fixedMemo" placeholder="家賃など" type="text"/>
+          <input id="fixedMemo" placeholder="例)家賃など" type="text"/>
 </label>
 <label>毎月の支払日
-          <input id="fixedDay" inputmode="numeric" max="31" min="1" placeholder="27" step="1" type="number"/>
+          <input id="fixedDay" inputmode="numeric" max="31" min="1" placeholder="例)27" step="1" type="number"/>
 </label>
 </div>
 <button id="addFixedExpense">登録する</button>
@@ -97,7 +97,7 @@
 <div class="entry-panel" data-entry-panel="planned">
 <div class="grid">
 <label>金額
-          <input id="plannedAmount" inputmode="numeric" min="0" placeholder="5000" step="100" type="number"/>
+          <input id="plannedAmount" inputmode="numeric" min="0" placeholder="例)5000" step="100" type="number"/>
 </label>
 <label>カテゴリ
           <div class="category-quick planned-category-quick" id="plannedCategoryQuick"><button data-category="食費" type="button">🍚 食費</button><button data-category="日用品" type="button">🛒 日用品</button><button data-category="交通費" type="button">🚃 交通費</button><button data-category="水光熱費" type="button">💡 水光熱費</button><button data-category="美容" type="button">💇 美容</button><button data-category="医療関係" type="button">🏥 医療関係</button><button data-category="娯楽" type="button">🎮 娯楽</button><button data-category="外食" type="button">🍴 外食</button><button data-category="その他" type="button">その他</button></div><select class="category-select" id="plannedCategory">
@@ -106,10 +106,10 @@
 </select>
 </label>
 <label>メモ
-          <input id="plannedMemo" placeholder="飲み会など" type="text"/>
+          <input id="plannedMemo" placeholder="例)飲み会など" type="text"/>
 </label>
 <label>予定日
-          <input id="plannedDate" type="date"/>
+          <input id="plannedDate" type="date" placeholder="例)2026/09/08"/>
 </label>
 </div>
 <button id="addPlannedExpense">登録する</button>
@@ -134,7 +134,7 @@
 <div class="stat"><span>今月使える予算</span><strong id="spendingBudget">¥0</strong></div>
 <div class="stat" id="incomeStat"><span>前月の収入</span><strong id="incomeView">¥0</strong></div>
 <div class="stat" id="extraIncomeStat"><span>毎月の最低限の手取りからの超過分</span><strong id="extraIncome">¥0</strong></div>
-<div class="income-restore" id="incomeRestore"><button class="secondary-btn" type="button">前月の収入を非表示</button></div>
+<div class="income-restore" id="incomeRestore"><button id="incomeToggle" class="secondary-btn" type="button">前月の収入を非表示</button></div>
 </section><section class="charts" data-section-content="charts">
 <div class="section-title full"><h2>グラフ</h2><button class="minus-btn" data-section="charts">−</button></div>
 <div class="card chart-card">
@@ -208,8 +208,9 @@
         <option>住居費</option><option>通信費</option><option>水光熱費</option><option>保険</option><option>サブスク</option><option>交通費</option><option>その他</option>
       </select>
     </label>
-    <label>メモ<input id="fixedEditMemo" type="text"></label>
+    <label>メモ<input id="fixedEditMemo" type="text" placeholder="例)家賃など"></label>
     <label>毎月の支払日<input id="fixedEditDay" type="number" min="1" max="31" step="1" inputmode="numeric"></label>
+    <div class="modal-reorder"><span>同じ支払日内の並び順</span><div><button id="moveFixedEditUp" type="button" class="secondary-btn">▲ 上へ</button><button id="moveFixedEditDown" type="button" class="secondary-btn">▼ 下へ</button></div></div>
     <div class="modal-actions"><button id="cancelFixedEdit" class="secondary-btn">キャンセル</button><button id="saveFixedEdit">変更を保存</button></div>
   </div>
 </div>
@@ -224,7 +225,8 @@
       </select>
     </label>
     <label>メモ<input id="plannedEditMemo" type="text"></label>
-    <label>予定日<input id="plannedEditDate" type="date"></label>
+    <label>予定日<input id="plannedEditDate" type="date" placeholder="例)2026/09/08"></label>
+    <div class="modal-reorder"><span>同じ日付内の並び順</span><div><button id="movePlannedEditUp" type="button" class="secondary-btn">▲ 上へ</button><button id="movePlannedEditDown" type="button" class="secondary-btn">▼ 下へ</button></div></div>
     <div class="modal-actions"><button id="cancelPlannedEdit" class="secondary-btn">キャンセル</button><button id="savePlannedEdit">変更を保存</button></div>
   </div>
 </div>
@@ -238,17 +240,17 @@
         <option>娯楽</option><option>外食</option><option>その他</option>
       </select>
     </label>
-    <label>メモ<input id="editMemo" type="text"></label>
-    <label>日付<input id="editDate" type="date"></label>
+    <label>メモ<input id="editMemo" type="text" placeholder="例)昼ごはん"></label>
+    <label>日付<input id="editDate" type="date" placeholder="例)2026/09/08"></label>
     <div class="modal-reorder"><span>同じ日付内の並び順</span><div><button id="moveEditUp" type="button" class="secondary-btn">▲ 上へ</button><button id="moveEditDown" type="button" class="secondary-btn">▼ 下へ</button></div></div>
-    <div class="modal-actions"><button id="rollbackToPlanned" type="button" class="secondary-btn">今月の予定支出に戻す</button><button id="cancelEdit" class="secondary-btn">キャンセル</button><button id="saveEdit">変更を保存</button></div>
+    <div class="modal-actions"><button id="rollbackToPlanned" type="button" class="secondary-btn">今月の予定支出に移動</button><button id="cancelEdit" class="secondary-btn">キャンセル</button><button id="saveEdit">変更を保存</button></div>
   </div>
 </div>
 <div id="inputValidation" class="validation-warning hidden"></div>
 <footer class="app-footer">
-<h1>家計簿 <span class="app-version">ver.44</span></h1>
+<h1>家計簿 <span class="app-version">ver.45</span></h1>
 <p>収入・固定費・貯金を先に整理して、今月使える金額を自動計算。</p>
 </footer></main>
-<script src="app.js?v=44"></script>
+<script src="app.js?v=45"></script>
 </body>
 </html>
