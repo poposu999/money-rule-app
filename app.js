@@ -1,5 +1,5 @@
 const KEY="moneyRuleAppV2";
-const VERSION=40;
+const VERSION=41;
 const CATEGORIES=["食費","日用品","水光熱費","交通費","美容","医療関係","娯楽","外食","その他"];
 const defaultState={settings:{minimumTakeHome:250000,fixedCosts:150000,savingsTarget:50000,extraAllowancePercent:50,extraSavingsPercent:50},income:0,bonus:0,expenses:[],plannedExpenses:[],fixedExpenses:[],memory:{expenseCategory:"食費",plannedCategory:"食費",plannedMemo:"",plannedDate:"",fixedCategory:"住居費",fixedMemo:"",fixedDay:""}};
 let state;
@@ -9,7 +9,6 @@ const today=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${
 try{state=JSON.parse(localStorage.getItem(KEY)||JSON.stringify(defaultState));}catch(e){state=structuredClone(defaultState);}
 state.settings={...defaultState.settings,...(state.settings||{})};
 state.memory={...defaultState.memory,...(state.memory||{})};
-delete state.memory.expenseDate;
 state.income=Math.max(0,Number(state.income)||0); state.bonus=Math.max(0,Number(state.bonus)||0);
 state.expenses=(Array.isArray(state.expenses)?state.expenses:[]).filter(Boolean).map(e=>({...e,amount:Number(e.amount)||0,date:String(e.date||today),category:String(e.category||"その他"),memo:String(e.memo||"")}));
 state.plannedExpenses=(Array.isArray(state.plannedExpenses)?state.plannedExpenses:[]).filter(Boolean).map(e=>({...e,amount:Number(e.amount)||0,date:String(e.date||today),category:String(e.category||"その他"),memo:String(e.memo||"")}));
