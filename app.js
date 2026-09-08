@@ -1,7 +1,7 @@
 const KEY="moneyRuleAppV2";
-const VERSION=45;
+const VERSION=46;
 const CATEGORIES=["食費","日用品","水光熱費","交通費","美容","医療関係","娯楽","外食","その他"];
-const defaultState={settings:{minimumTakeHome:250000,fixedCosts:150000,savingsTarget:50000,extraAllowancePercent:50,extraSavingsPercent:50},income:0,bonus:0,expenses:[],plannedExpenses:[],fixedExpenses:[],memory:{expenseCategory:"食費",plannedCategory:"食費",plannedMemo:"",plannedDate:"",fixedCategory:"住居費",fixedMemo:"",fixedDay:""}};
+const defaultState={settings:{minimumTakeHome:200000,fixedCosts:150000,savingsTarget:50000,extraAllowancePercent:60,extraSavingsPercent:40},income:250000,bonus:0,expenses:[],plannedExpenses:[],fixedExpenses:[],memory:{expenseCategory:"食費",plannedCategory:"食費",plannedMemo:"",plannedDate:"",fixedCategory:"住居費",fixedMemo:"",fixedDay:""}};
 let state;
 let sessionExpenseDate="";
 const now=new Date();
