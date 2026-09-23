@@ -1,11 +1,11 @@
-const CACHE_NAME="money-rule-app-v49";
-const APP_SHELL=["./","./index.html","./style.css?v=49","./app.js?v=49","./manifest.json"];
+const CACHE_NAME="money-rule-app-v50";
+const APP_SHELL=["./","./index.html","./style.css?v=50","./workflow.css?v=50","./model.js?v=50","./app.js?v=50","./workflow.js?v=50","./manifest.json"];
 const APP_PATH=new URL("./",self.location.href).pathname;
 self.addEventListener("install",event=>{
   event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(APP_SHELL.map(url=>new Request(url,{cache:"reload"})))).then(()=>self.skipWaiting()));
 });
 self.addEventListener("activate",event=>{
-  event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>/^money-rule-app-v\d/.test(key)&&key!==CACHE_NAME).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));
+  event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key==="money-rule-app-v49").map(key=>caches.delete(key)))).then(()=>self.clients.claim()));
 });
 self.addEventListener("fetch",event=>{
   if(event.request.method!=="GET")return;
@@ -23,3 +23,4 @@ self.addEventListener("fetch",event=>{
     return Response.error();
   }));
 });
+
