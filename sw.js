@@ -1,5 +1,5 @@
 const CACHE_NAME="money-rule-app-v50";
-const APP_SHELL=["./","./index.html","./style.css?v=50.1","./workflow.css?v=50.1","./model.js?v=50.1","./app.js?v=50.1","./workflow.js?v=50.1","./manifest.json"];
+const APP_SHELL=["./","./index.html","./style.css?v=50.2","./workflow.css?v=50.2","./model.js?v=50.2","./app.js?v=50.2","./backup-reminder.js?v=50.2","./workflow.js?v=50.2","./manifest.json"];
 const APP_PATH=new URL("./",self.location.href).pathname;
 self.addEventListener("install",event=>{
   event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(APP_SHELL.map(url=>new Request(url,{cache:"reload"})))).then(()=>self.skipWaiting()));
